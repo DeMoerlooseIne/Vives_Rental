@@ -1,5 +1,8 @@
 ﻿using System.Net.Http.Json;
 using VivesRental.Model;
+using VivesRental.Services.Model.Filters;
+using VivesRental.Services.Model.Requests;
+using VivesRental.Services.Model.Results;
 
 namespace VivesRental.Sdk
 {
@@ -12,49 +15,40 @@ namespace VivesRental.Sdk
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<IList<ArticleReservation>> FindAsync()
+        public async Task<IList<ArticleReservationResult>> FindAsync(ArticleReservationFilter? filter)
         {
             var httpClient = _httpClientFactory.CreateClient("VivesRentalApi");
             var route = "/api/articlereservations";
             var response = await httpClient.GetAsync(route);
             response.EnsureSuccessStatusCode();
-            var articlereservations = await response.Content.ReadFromJsonAsync<IList<ArticleReservation>>();
+            var articlereservations = await response.Content.ReadFromJsonAsync<IList<ArticleReservationResult>>();
             if (articlereservations is null)
             {
-                return new List<ArticleReservation>();
+                return new List<ArticleReservationResult>();
             }
 
             return articlereservations;
         }
 
-        public async Task<ArticleReservation?> GetAsync(int id)
+        public async Task<ArticleReservationResult?> GetAsync(Guid id)
         {
             var httpClient = _httpClientFactory.CreateClient("VivesRentalApi");
             var route = $"/api/articlereservations/{id}";
             var response = await httpClient.GetAsync(route);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<ArticleReservation>();
+            return await response.Content.ReadFromJsonAsync<ArticleReservationResult>();
         }
 
-        public async Task<ArticleReservation?> CreateAsync(ArticleReservation articlereservation)
+        public async Task<ArticleReservationResult?> CreateAsync(ArticleReservationRequest articlereservation)
         {
             var httpClient = _httpClientFactory.CreateClient("VivesRentalApi");
             var route = "/api/articlereservations";
             var response = await httpClient.PostAsJsonAsync(route, articlereservation);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<ArticleReservation>();
+            return await response.Content.ReadFromJsonAsync<ArticleReservationResult>();
         }
 
-        public async Task<ArticleReservation?> UpdateAsync(int id, ArticleReservation articlereservation)
-        {
-            var httpClient = _httpClientFactory.CreateClient("VivesRentalApi");
-            var route = $"/api/articlereservations/{id}";
-            var response = await httpClient.PutAsJsonAsync(route, articlereservation);
-            response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<ArticleReservation>();
-        }
-
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> RemoveAsync(Guid id)
         {
             var httpClient = _httpClientFactory.CreateClient("VivesRentalApi");
             var route = $"/api/articlereservations/{id}";
