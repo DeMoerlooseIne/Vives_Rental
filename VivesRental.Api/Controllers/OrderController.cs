@@ -18,7 +18,7 @@ namespace VivesRental.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Find(OrderFilter? filter = null)
+        public async Task<IActionResult> Find([FromQuery]OrderFilter? filter = null)
         {
             var orders = await _orderService.FindAsync(filter);
             return Ok(orders);
@@ -40,7 +40,7 @@ namespace VivesRental.Api.Controllers
         }
 
 
-        [HttpDelete("{id}")]
+        [HttpPut("{id}")]
         public async Task<IActionResult> ReturnOrder([FromRoute] Guid id, DateTime returnedAt)
         {
             var isReturned = await _orderService.ReturnAsync(id, returnedAt);
