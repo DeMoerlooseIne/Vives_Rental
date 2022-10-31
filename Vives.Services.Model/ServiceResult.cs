@@ -7,7 +7,10 @@
         public bool IsSuccess => Messages.All(m => m.Type != ServiceMessageType.Error);
     }
 
+    public class ServiceResult<T> : ServiceResult
+
     public class ServiceResult<T> : ServiceResult 
+
     {
         public ServiceResult(T? data = default(T))
         {
