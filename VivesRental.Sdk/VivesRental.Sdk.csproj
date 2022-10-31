@@ -12,6 +12,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\VivesRental.Model\VivesRental.Model.csproj" />
+    <ProjectReference Include="..\VivesRental.Services.Model\VivesRental.Services.Model.csproj" />
   </ItemGroup>
 
 </Project>

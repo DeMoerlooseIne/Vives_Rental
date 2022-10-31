@@ -17,7 +17,7 @@ namespace VivesRental.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Find(OrderLineFilter? filter = null)
+        public async Task<IActionResult> Find([FromQuery]OrderLineFilter? filter = null)
         {
             var orders = await _orderLineService.FindAsync(filter);
             return Ok(orders);
@@ -30,20 +30,21 @@ namespace VivesRental.Api.Controllers
             return Ok(order);
         }
 
-
+        [HttpPut("{id}")]
         public async Task<IActionResult> RentItem([FromRoute] Guid customerId, Guid articleId)
         {
             var rentedOrderLine = await _orderLineService.RentAsync(customerId,articleId);
             return Ok(rentedOrderLine);
         }
 
-
+        [HttpPut("{id}")]
         public async Task<IActionResult> RentItems([FromRoute] Guid customerId, IList<Guid> articleIds)
         {
             var rentedOrderLine = await _orderLineService.RentAsync(customerId, articleIds);
             return Ok(rentedOrderLine);
         }
 
+        [HttpPut("{id}")]
         public async Task<IActionResult> ReturnOrder([FromRoute] Guid orderLineId, DateTime returnedAt)
         {
             var isReturned = await _orderLineService.ReturnAsync(orderLineId, returnedAt);

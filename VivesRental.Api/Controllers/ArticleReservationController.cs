@@ -18,7 +18,7 @@ namespace VivesRental.Api.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> Find(ArticleReservationFilter? filter = null)
+        public async Task<IActionResult> Find([FromQuery]ArticleReservationFilter? filter = null)
         {
             var articles = await _articleReservationService.FindAsync(filter);
             return Ok(articles);

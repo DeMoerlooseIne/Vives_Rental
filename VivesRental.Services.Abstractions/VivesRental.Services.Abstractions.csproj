@@ -7,6 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Vives.Services.Model\Vives.Services.Model.csproj" />
     <ProjectReference Include="..\VivesRental.Services.Model\VivesRental.Services.Model.csproj" />
   </ItemGroup>
 
