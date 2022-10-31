@@ -38,6 +38,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vives.Services.Model", "Vives.Services.Model\Vives.Services.Model.csproj", "{51852D52-2FD9-4999-A713-0A7789F10E2E}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Vives", "Vives", "{790DD049-51CD-45C0-BD4F-F41F6507E4AB}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Vives", "Vives", "{FCCDBC88-5CBD-4510-956B-6F85B929092A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Vives.Services.Model", "Vives.Services.Model\Vives.Services.Model.csproj", "{8B1AAB9C-C710-4FD5-8061-301C7FAA5E5B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

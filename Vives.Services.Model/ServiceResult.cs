@@ -8,6 +8,9 @@
     }
 
     public class ServiceResult<T> : ServiceResult
+
+    public class ServiceResult<T> : ServiceResult 
+
     {
         public ServiceResult(T? data = default(T))
         {
