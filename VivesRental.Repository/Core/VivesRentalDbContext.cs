@@ -4,11 +4,11 @@ using VivesRental.Repository.Extensions;
 
 namespace VivesRental.Repository.Core;
 
-public class VivesRentalDbContext: DbContext
+public class VivesRentalDbContext : DbContext
 {
-    public VivesRentalDbContext(DbContextOptions options): base(options)
+    public VivesRentalDbContext(DbContextOptions options) : base(options)
     {
-            
+
     }
 
     public DbSet<Product> Products => Set<Product>();
@@ -24,39 +24,96 @@ public class VivesRentalDbContext: DbContext
         base.OnModelCreating(modelBuilder);
     }
 
-    //public void Seed()
-    //{
+    public void Seed()
+    {
 
-    //    var bavoEmployee = new EmployeeResult { FirstName = "Bavo", LastName = "Ketels" };
-    //    var johnEmployee = new EmployeeResult { FirstName = "John", LastName = "Doe" };
+        var zoëCustomer = new Customer { FirstName = "Odin", LastName = "Depreeuw", Email = "kimmetje@hotmail.com", PhoneNumber = "0475/53.26.45" };
+        var odinCustomer = new Customer { FirstName = "Zoë", LastName = "Depreeuw", Email = "kimmetje@hotmail.com", PhoneNumber = "0475/53.26.45" };
+        var kimCustomer = new Customer { FirstName = "Kim", LastName = "De Moerloose", Email = "kimmetje@hotmail.com", PhoneNumber = "0475/53.26.45"};
+        var ineCustomer = new Customer { FirstName = "Ine", LastName = "De Moerloose", Email = "enitjeun@hotmail.com", PhoneNumber = "0475/53.26.45" };
 
-    //    Employees.Add(bavoEmployee);
-    //    Employees.Add(johnEmployee);
 
-    //    var firstTicket = new HelpDeskTicketResult
-    //    {
-    //        Id = 1,
-    //        Issue = "First article ticket",
-    //        Description = "Short description of first ticket",
-    //        Status = "Handled",
-    //        EmployeeId = bavoEmployee.Id,
-    //        TicketHandler = bavoEmployee,
-    //        CreatedDate = DateTime.Now
-    //    };
+        Customers.Add(zoëCustomer);
+        Customers.Add(odinCustomer);
+        Customers.Add(ineCustomer);
+        Customers.Add(kimCustomer);
 
-    //    var secondTicket = new HelpDeskTicketResult
-    //    {
-    //        Id = 2,
-    //        Issue = "Second article ticket",
-    //        Description = "Short description of second ticket",
-    //        Status = "In progress",
-    //        EmployeeId = johnEmployee.Id,
-    //        CreatedDate = DateTime.Now
-    //    };
+        var firstProduct = new Product
+        {
+            Name = "Coca cola",
+            Description = "TMI",
+            Manufacturer = "Coca Cola Company",
+            Publisher = "Coca Cola Company",
+            RentalExpiresAfterDays = 30
+        };
 
-    //    HelpDeskTickets.Add(firstTicket);
-    //    HelpDeskTickets.Add(secondTicket);
+        var secondProduct = new Product
+        {
+            Name = "Coca cola",
+            Description = "TMI",
+            Manufacturer = "Coca Cola Company",
+            Publisher = "Coca Cola Company",
+            RentalExpiresAfterDays = 30
+        };
 
-    //    SaveChanges();
-    //}
+        var thirdProduct = new Product
+        {
+            Name = "Coca cola",
+            Description = "TMI",
+            Manufacturer = "Coca Cola Company",
+            Publisher = "Coca Cola Company",
+            RentalExpiresAfterDays = 30
+        };
+
+        var forthProduct = new Product
+        {
+            Name = "Coca cola",
+            Description = "TMI",
+            Manufacturer = "Coca Cola Company",
+            Publisher = "Coca Cola Company",
+            RentalExpiresAfterDays = 30
+        };
+
+        Products.Add(firstProduct);
+        Products.Add(secondProduct);
+        Products.Add(thirdProduct);
+        Products.Add(forthProduct);
+
+        var firstArticle = new Article
+        {
+            ProductId = Guid.Empty,
+            Status = Enums.ArticleStatus.Normal
+        };
+
+        var secondArticle = new Article
+        {
+            ProductId = Guid.Empty,
+            Product = new Product
+            {
+                Id = Guid.Empty,
+                Name = "Coca Cola"
+            },
+            Status = Enums.ArticleStatus.Normal
+        };
+
+
+        var firstArticleReservation = new ArticleReservation
+        {
+            ArticleId = Guid.Empty,
+            CustomerId = Guid.Empty,
+            FromDateTime = DateTime.Now,
+            UntilDateTime = DateTime.UtcNow.AddDays(15)
+        };
+
+        var secondArticleReservation = new ArticleReservation
+        {
+            ArticleId = Guid.Empty,
+            CustomerId = Guid.Empty,
+            FromDateTime = DateTime.Now,
+            UntilDateTime = DateTime.UtcNow.AddDays(15)
+        };
+
+
+        SaveChanges();
+    }
 }
