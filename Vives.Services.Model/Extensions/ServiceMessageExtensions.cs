@@ -4,7 +4,7 @@
     {
         public static T JsonNull<T>(this T serviceResult)
             where T: ServiceResult
-        {
+        { 
             serviceResult.Messages.Add(new ServiceMessage
             {
                 Code = "JsonNullError",
