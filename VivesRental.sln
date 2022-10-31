@@ -31,9 +31,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VivesRental.Model.Extension
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Api", "Api", "{EECCEECC-4891-4025-B1A0-9FC33F038004}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VivesRental.Sdk", "VivesRental.Sdk\VivesRental.Sdk.csproj", "{8366A1D3-6ACB-4E2C-995D-7AEE220CCB14}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VivesRental.Sdk", "VivesRental.Sdk\VivesRental.Sdk.csproj", "{8366A1D3-6ACB-4E2C-995D-7AEE220CCB14}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VivesRental.Api", "VivesRental.Api\VivesRental.Api.csproj", "{9DBFFDC0-E61A-490D-B446-FF40D4CE64BA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "VivesRental.Api", "VivesRental.Api\VivesRental.Api.csproj", "{9DBFFDC0-E61A-490D-B446-FF40D4CE64BA}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Vives", "Vives", "{FCCDBC88-5CBD-4510-956B-6F85B929092A}"
 EndProject

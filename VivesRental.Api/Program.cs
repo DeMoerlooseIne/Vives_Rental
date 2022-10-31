@@ -36,10 +36,10 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
     var scope = app.Services.CreateScope();
     var dbContext = scope.ServiceProvider.GetRequiredService<VivesRentalDbContext>();
-    //if (dbContext.Database.IsInMemory())
-    //{
-    //    dbContext.Seed();
-    //}
+    if (dbContext.Database.IsInMemory())
+    {
+        dbContext.Seed();
+    }
 }
 
 app.UseHttpsRedirection();
