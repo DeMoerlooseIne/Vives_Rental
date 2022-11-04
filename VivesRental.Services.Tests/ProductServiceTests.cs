@@ -26,7 +26,7 @@ public class ProductServiceTests
         var products = await sut.FindAsync();
 
         //Assert
-        Assert.AreEqual(10, products.Count);
+        Assert.AreEqual(10, products.Data.Count);
     }
 
     [TestMethod]
@@ -40,7 +40,7 @@ public class ProductServiceTests
         var products = await sut.FindAsync();
 
         //Assert
-        Assert.AreEqual(0, products.Count);
+        Assert.AreEqual(0, products.Data.Count);
     }
 
     [TestMethod]
@@ -60,7 +60,7 @@ public class ProductServiceTests
 
         //Assert
         Assert.IsNotNull(serviceProduct);
-        Assert.AreEqual(product.Id, serviceProduct.Id);
+        Assert.AreEqual(product.Id, serviceProduct.Data.Id);
     }
 
 
@@ -81,7 +81,7 @@ public class ProductServiceTests
         var result = await productService.RemoveAsync(product.Id);
 
         //Assert
-        Assert.IsTrue(result);
+        Assert.Equals(true, result);
     }
 
     [TestMethod]
@@ -103,7 +103,7 @@ public class ProductServiceTests
         var result = await productService.RemoveAsync(productToAdd.Id);
 
         //Assert
-        Assert.IsTrue(result);
+        Assert.Equals(true, result);
     }
 
     [TestMethod]
@@ -131,7 +131,7 @@ public class ProductServiceTests
         var result = await productService.RemoveAsync(product.Id);
 
         //Assert
-        Assert.IsTrue(result);
+        Assert.Equals(true, result);
     }
 
     [TestMethod]
@@ -156,7 +156,7 @@ public class ProductServiceTests
         //Act
         var result = await productService.FindAsync();
 
-        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual(1, result.Data.Count);
     }
 
     [TestMethod]
@@ -184,7 +184,7 @@ public class ProductServiceTests
         //Act
         var result = await productService.FindAsync();
 
-        Assert.AreEqual(1, result.Count);
+        Assert.AreEqual(1, result.Data.Count);
     }
 
     [TestMethod]
@@ -222,6 +222,6 @@ public class ProductServiceTests
         };
         var result = await productService.FindAsync(filter);
 
-        Assert.AreEqual(0, result.Count);
+        Assert.AreEqual(0, result.Data.Count);
     }
 }

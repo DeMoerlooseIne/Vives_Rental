@@ -1,4 +1,5 @@
-﻿using VivesRental.Enums;
+﻿using Vives.Services.Model;
+using VivesRental.Enums;
 using VivesRental.Services.Model.Filters;
 using VivesRental.Services.Model.Requests;
 using VivesRental.Services.Model.Results;
@@ -7,13 +8,13 @@ namespace VivesRental.Services.Abstractions;
 
 public interface IArticleService
 {
-    Task<ArticleResult?> GetAsync(Guid id);
+    Task<ServiceResult<ArticleResult?>> GetAsync(Guid id);
         
-    Task<List<ArticleResult>> FindAsync(ArticleFilter? filter = null);
+    Task<ServiceResult<List<ArticleResult>>> FindAsync(ArticleFilter? filter = null);
         
-    Task<ArticleResult?> CreateAsync(ArticleRequest entity);
+    Task<ServiceResult<ArticleResult?>> CreateAsync(ArticleRequest entity);
        
-    Task<bool> UpdateStatusAsync(Guid articleId, ArticleStatus status);
-    Task<bool> RemoveAsync(Guid id);
+    Task<ServiceResult> UpdateStatusAsync(Guid articleId, ArticleStatus status);
+    Task<ServiceResult> RemoveAsync(Guid id);
         
 }

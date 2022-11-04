@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Vives.Services.Model;
 using VivesRental.Model;
 using VivesRental.Repository.Extensions;
 
@@ -11,7 +12,7 @@ public class VivesRentalDbContext : DbContext
 
     }
 
-    public DbSet<Product> Products => Set<Product>();
+    public DbSet<Product> Products => Set <Product>();
     public DbSet<Article> Articles => Set<Article>();
     public DbSet<ArticleReservation> ArticleReservations => Set<ArticleReservation>();
     public DbSet<Order> Orders => Set<Order>();

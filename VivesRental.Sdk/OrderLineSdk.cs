@@ -1,5 +1,7 @@
 ﻿using System.Net.Http.Json;
-using VivesRental.Model;
+using Vives.Services.Model;
+using VivesRental.Sdk.Extensions;
+using VivesRental.Services.Model.Filters;
 using VivesRental.Services.Model.Results;
 
 namespace VivesRental.Sdk
@@ -13,53 +15,52 @@ namespace VivesRental.Sdk
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<IList<OrderLineResult>> FindAsync()
+        public async Task<ServiceResult<IList<OrderLineResult>>?> FindAsync(OrderLineFilter? filter)
         {
             var httpClient = _httpClientFactory.CreateClient("VivesRentalApi");
-            var route = "/api/orderlines";
+            var route = "/api/orderlines".AddQuery(filter);
             var response = await httpClient.GetAsync(route);
             response.EnsureSuccessStatusCode();
-            var orderlines = await response.Content.ReadFromJsonAsync<IList<OrderLineResult>>();
+            var orderlines = await response.Content.ReadFromJsonAsync <ServiceResult<IList<OrderLineResult>>>();
             if (orderlines is null)
             {
-                return new List<OrderLineResult>();
+                return new ServiceResult<IList<OrderLineResult>>();
             }
-
             return orderlines;
         }
 
-        public async Task<OrderLineResult?> GetAsync(Guid id)
+        public async Task<ServiceResult<OrderLineResult>?> GetAsync(Guid id)
         {
             var httpClient = _httpClientFactory.CreateClient("VivesRentalApi");
             var route = $"/api/orderlines/{id}";
             var response = await httpClient.GetAsync(route);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<OrderLineResult>();
+            return await response.Content.ReadFromJsonAsync <ServiceResult<OrderLineResult>>();
         }
 
-        public async Task<bool> RentAsync(Guid orderId,Guid articleId)
+        public async Task<ServiceResult?> RentAsync(Guid orderId,Guid articleId)
         {
             var httpClient = _httpClientFactory.CreateClient("VivesRentalApi");
-            var route = $"/api/orderlines/{orderId}";
+            var route = $"/api/orderlines/{orderId}/rentedorderline";
             var response = await httpClient.PutAsJsonAsync(route, articleId);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<bool>();
+            return await response.Content.ReadFromJsonAsync<ServiceResult>();
         }
-        public async Task<bool> RentAsync(Guid orderId, IList<Guid> articleIds)
+        public async Task<ServiceResult?> RentAsync(Guid orderId, IList<Guid> articleIds)
         {
             var httpClient = _httpClientFactory.CreateClient("VivesRentalApi");
-            var route = $"/api/orderlines/{orderId}";
+            var route = $"/api/orderlines/{orderId}/rentedorderlines";
             var response = await httpClient.PutAsJsonAsync(route, articleIds);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<bool>();
+            return await response.Content.ReadFromJsonAsync<ServiceResult>();
         }
-        public async Task<bool> ReturnAsync(Guid orderLineId, DateTime returnedAt)
+        public async Task<ServiceResult?> ReturnAsync(Guid Id, DateTime returnedAt)
         {
             var httpClient = _httpClientFactory.CreateClient("VivesRentalApi");
-            var route = $"/api/orderlines/{orderLineId}";
+            var route = $"/api/orderlines/{Id}/returnedorderline";
             var response = await httpClient.PutAsJsonAsync(route, returnedAt);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<bool>();
+            return await response.Content.ReadFromJsonAsync<ServiceResult>();
         }
     }
 }

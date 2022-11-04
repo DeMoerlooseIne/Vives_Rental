@@ -1,10 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net.Http.Json;
-using System.Text;
-using System.Threading.Tasks;
-using VivesRental.Model;
+﻿using System.Net.Http.Json;
+using Vives.Services.Model;
+using VivesRental.Sdk.Extensions;
 using VivesRental.Services.Model.Filters;
 using VivesRental.Services.Model.Results;
 
@@ -19,46 +15,45 @@ namespace VivesRental.Sdk
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<IList<OrderResult>> FindAsync(OrderFilter? filter)
+        public async Task<ServiceResult<IList<OrderResult>>?> FindAsync(OrderFilter? filter)
         {
             var httpClient = _httpClientFactory.CreateClient("VivesRentalApi");
-            var route = "/api/orders";
+            var route = "/api/orders".AddQuery(filter);
             var response = await httpClient.GetAsync(route);
             response.EnsureSuccessStatusCode();
-            var orders = await response.Content.ReadFromJsonAsync<IList<OrderResult>>();
+            var orders = await response.Content.ReadFromJsonAsync <ServiceResult<IList<OrderResult>>>();
             if (orders is null)
             {
-                return new List<OrderResult>();
+                return new ServiceResult<IList<OrderResult>>();
             }
-
             return orders;
         }
 
-        public async Task<OrderResult?> GetAsync(Guid id)
+        public async Task<ServiceResult<OrderResult>?> GetAsync(Guid id)
         {
             var httpClient = _httpClientFactory.CreateClient("VivesRentalApi");
             var route = $"/api/orders/{id}";
             var response = await httpClient.GetAsync(route);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<OrderResult>();
+            return await response.Content.ReadFromJsonAsync <ServiceResult<OrderResult>>();
         }
 
-        public async Task<OrderResult?> CreateAsync(Guid customerId)
+        public async Task<ServiceResult<OrderResult>?> CreateAsync(Guid customerId)
         {
             var httpClient = _httpClientFactory.CreateClient("VivesRentalApi");
             var route = "/api/orders";
             var response = await httpClient.PostAsJsonAsync(route, customerId);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<OrderResult>();
+            return await response.Content.ReadFromJsonAsync <ServiceResult<OrderResult>>();
         }
 
-        public async Task<bool> ReturnAsync(Guid id, DateTime returnedAt)
+        public async Task<ServiceResult?> ReturnAsync(Guid id, DateTime returnedAt)
         {
             var httpClient = _httpClientFactory.CreateClient("VivesRentalApi");
             var route = $"/api/orders/{id}";
             var response = await httpClient.PutAsJsonAsync(route, returnedAt);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<bool>();
+            return await response.Content.ReadFromJsonAsync<ServiceResult>();
         }
     }
 }

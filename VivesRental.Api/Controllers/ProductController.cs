@@ -54,11 +54,11 @@ namespace VivesRental.Api.Controllers
             return Ok(isDeleted);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> GenerateArticlesAsync([FromRoute] Guid id)
+        [HttpPost("{id}")]
+        public async Task<IActionResult> GenerateArticlesAsync([FromRoute] Guid id, int amount)
         {
-            var isDeleted = await _productService.RemoveAsync(id);
-            return Ok(isDeleted);
+            var generateArticles = await _productService.GenerateArticlesAsync(id, amount);
+            return Ok(generateArticles);
         }
     }
 }

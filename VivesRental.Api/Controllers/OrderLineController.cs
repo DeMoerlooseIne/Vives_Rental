@@ -30,25 +30,25 @@ namespace VivesRental.Api.Controllers
             return Ok(order);
         }
 
-        [HttpPut("{id}")]
+        [HttpPost("{orderId}/rentedorderline")]
         public async Task<IActionResult> RentItem([FromRoute] Guid customerId, Guid articleId)
         {
             var rentedOrderLine = await _orderLineService.RentAsync(customerId,articleId);
             return Ok(rentedOrderLine);
         }
 
-        [HttpPut("{id}")]
+        [HttpPut("{orderId}/rentedorderlines")]
         public async Task<IActionResult> RentItems([FromRoute] Guid customerId, IList<Guid> articleIds)
         {
-            var rentedOrderLine = await _orderLineService.RentAsync(customerId, articleIds);
-            return Ok(rentedOrderLine);
+            var rentedOrderLines = await _orderLineService.RentAsync(customerId, articleIds);
+            return Ok(rentedOrderLines);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> ReturnOrder([FromRoute] Guid orderLineId, DateTime returnedAt)
+        [HttpDelete("{id}/returnedorderline")]
+        public async Task<IActionResult> ReturnOrder([FromRoute] Guid Id, DateTime returnedAt)
         {
-            var isReturned = await _orderLineService.ReturnAsync(orderLineId, returnedAt);
-            return Ok(isReturned);
+            var returnedOrderLine = await _orderLineService.ReturnAsync(Id, returnedAt);
+            return Ok(returnedOrderLine);
         }
     }
 }

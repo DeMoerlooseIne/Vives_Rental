@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using Vives.Services.Model;
 using VivesRental.Model;
 using VivesRental.Repository.Core;
 using VivesRental.Services.Abstractions;
@@ -18,23 +19,41 @@ public class ArticleReservationService : IArticleReservationService
     {
         _context = context;
     }
-    public Task<ArticleReservationResult?> GetAsync(Guid id)
+    public async Task<ServiceResult<ArticleReservationResult?>> GetAsync(Guid id)
     {
-        return _context.ArticleReservations
+        var serviceResult = new ServiceResult<ArticleReservationResult?>();
+
+        var articleReservationDetails = await _context.ArticleReservations
             .Where(ar => ar.Id == id)
             .MapToResults()
             .FirstOrDefaultAsync();
+
+        if (serviceResult.IsSuccess)
+            serviceResult.Messages.AsParallel();
+        else
+            serviceResult.Data.Equals(articleReservationDetails);
+
+        return serviceResult;
     }
         
-    public Task<List<ArticleReservationResult>> FindAsync(ArticleReservationFilter? filter = null)
+    public async Task<ServiceResult<List<ArticleReservationResult>>> FindAsync(ArticleReservationFilter? filter = null)
     {
-        return _context.ArticleReservations
+        var serviceResult = new ServiceResult<List<ArticleReservationResult?>>();
+
+        var articleReservationDetails = await _context.ArticleReservations
             .ApplyFilter(filter)
             .MapToResults()
             .ToListAsync();
+
+        if (serviceResult.IsSuccess)
+            serviceResult.Messages.AsParallel();
+        else
+            serviceResult.Data.Equals(articleReservationDetails);
+
+        return serviceResult;
     }
         
-    public async Task<ArticleReservationResult?> CreateAsync(ArticleReservationRequest request)
+    public async Task<ServiceResult<ArticleReservationResult?>> CreateAsync(ArticleReservationRequest request)
     {
         request.FromDateTime ??= DateTime.Now;
         request.UntilDateTime ??= DateTime.Now.AddMinutes(5);
@@ -59,7 +78,7 @@ public class ArticleReservationService : IArticleReservationService
     /// </summary>
     /// <param name="id">The id of the ArticleReservation</param>
     /// <returns>True if the article reservation was deleted</returns>
-    public async Task<bool> RemoveAsync(Guid id)
+    public async Task<ServiceResult> RemoveAsync(Guid id)
     {
         var articleReservation = new ArticleReservation { Id = id };
         _context.ArticleReservations.Attach(articleReservation);
@@ -67,6 +86,13 @@ public class ArticleReservationService : IArticleReservationService
 
         await _context.SaveChangesAsync();
 
-        return true;
+        var serviceResult = new ServiceResult();
+        serviceResult.Messages.Add(new ServiceMessage()
+        {
+            Code = "ArticleReservationDeleted",
+            Message = "ArticleReservation was successfully deleted.",
+            Type = ServiceMessageType.Info
+        });
+        return serviceResult;
     }
 }

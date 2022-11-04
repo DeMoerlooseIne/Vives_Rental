@@ -1,4 +1,5 @@
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
 using VivesRental.Repository.Core;
 using VivesRental.Services;
 using VivesRental.Services.Abstractions;
@@ -8,6 +9,14 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services.AddControllers().AddJsonOptions(x =>
+{
+    //handy tool working with REST-API Swagger :
+    // Serializes enums as strings in api responses 
+    x.JsonSerializerOptions.Converters.Add(new JsonStringEnumConverter());
+});
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>

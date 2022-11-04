@@ -1,5 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Vives.Services.Model;
+using Vives.Services.Model.Extensions;
 using VivesRental.Model;
 using VivesRental.Repository.Core;
 using VivesRental.Services.Abstractions;
@@ -20,24 +22,39 @@ public class ProductService : IProductService
     }
 
 
-    public Task<ProductResult?> GetAsync(Guid id)
+    public async Task<ServiceResult<ProductResult?>> GetAsync(Guid id)
     {
-        return _context.Products
+        var productDetails = await _context.Products
             .Where(p => p.Id == id)
             .MapToResults()
             .FirstOrDefaultAsync();
+
+        var serviceResult = new ServiceResult<ProductResult?>(productDetails);
+
+        if (serviceResult.Data == null)
+        {
+            serviceResult.DataIsNull();
+        }
+        return serviceResult;
     }
 
-    public Task<List<ProductResult>> FindAsync(ProductFilter? filter = null)
-    {
-
-        return _context.Products
+    public async Task<ServiceResult<List<ProductResult>>> FindAsync(ProductFilter? filter = null)
+    { 
+        var productDetails = await _context.Products
             .ApplyFilter(filter)
             .MapToResults(filter)
             .ToListAsync();
+
+        var serviceResult = new ServiceResult<List<ProductResult?>>();
+
+        if (serviceResult.Data == null)
+        {
+            serviceResult.DataIsNull();
+        }
+        return serviceResult;
     }
 
-    public async Task<ProductResult?> CreateAsync(ProductRequest entity)
+    public async Task<ServiceResult<ProductResult?>> CreateAsync(ProductRequest entity)
     {
         var product = new Product
         {
@@ -48,12 +65,19 @@ public class ProductService : IProductService
             RentalExpiresAfterDays = entity.RentalExpiresAfterDays
         };
 
+        if (product == null)
+        {
+            var serviceResult = new ServiceResult<ProductResult?>();
+            serviceResult.DataIsNull();
+            return serviceResult;
+        }
+
         _context.Products.Add(product);
         await _context.SaveChangesAsync();
         return await GetAsync(product.Id);
     }
 
-    public async Task<ProductResult?> EditAsync(Guid id, ProductRequest entity)
+    public async Task<ServiceResult<ProductResult?>> EditAsync(Guid id, ProductRequest entity)
     {
         var product = await _context.Products
             .FirstOrDefaultAsync(p => p.Id == id);
@@ -79,12 +103,26 @@ public class ProductService : IProductService
     /// </summary>
     /// <param name="id">The id of the Product</param>
     /// <returns>True if the product was deleted</returns>
-    public async Task<bool> RemoveAsync(Guid id)
+    public async Task<ServiceResult> RemoveAsync(Guid id)
     {
+        var product = new Product { Id = id };
+
         if (_context.Database.IsInMemory())
         {
-            await RemoveInternalAsync(id);
-            return true;
+            _context.Products.Attach(product);
+            _context.Products.Remove(product);
+            var serviceResult = new ServiceResult<bool>();
+            var changes = await _context.SaveChangesAsync();
+            if (changes == 0)
+            {
+                serviceResult.Messages.Add(new ServiceMessage
+                {
+                    Code = "ProductRemoved",
+                    Message = "The product was succesfully deleted.",
+                    Type = ServiceMessageType.Error
+                });
+            }
+            return serviceResult;
         }
 
         await using var transaction = await _context.Database.BeginTransactionAsync();
@@ -93,7 +131,14 @@ public class ProductService : IProductService
         {
             await RemoveInternalAsync(id);
             await transaction.CommitAsync();
-            return true;
+            var serviceResult = new ServiceResult<bool>(true);
+            serviceResult.Messages.Add(new ServiceMessage()
+            {
+                Code = "ProductRemoved",
+                Message = "The product was successfully deleted.",
+                Type = ServiceMessageType.Info
+            });
+            return serviceResult;
         }
         catch
         {
@@ -122,11 +167,18 @@ public class ProductService : IProductService
     /// This is limited to maximum 10.000
     /// </summary>
     /// <returns>True if articles are added</returns>
-    public async Task<bool> GenerateArticlesAsync(Guid productId, int amount)
+    public async Task<ServiceResult<bool>> GenerateArticlesAsync(Guid productId, int amount)
     {
         if (amount <= 0 || amount > 10000) //Set a limit to 10K
         {
-            return false;
+            var serviceResult = new ServiceResult<bool>();
+            serviceResult.Messages.Add(new ServiceMessage()
+            {
+                Code = "IncorrectAmount",
+                Message = "Give up a different amount.",
+                Type = ServiceMessageType.Error
+            });
+            return serviceResult;
         }
 
         for (int i = 0; i < amount; i++)
@@ -139,7 +191,15 @@ public class ProductService : IProductService
         }
 
         var numberOfObjectsUpdated = await _context.SaveChangesAsync();
-        return numberOfObjectsUpdated > 0;
+
+        var serviceSuccesResult = new ServiceResult<bool>(numberOfObjectsUpdated > 0);
+        serviceSuccesResult.Messages.Add(new ServiceMessage()
+        {
+            Code = "Success",
+            Message = $"The {numberOfObjectsUpdated} articles were successfully added.",
+            Type = ServiceMessageType.Info
+        });
+        return serviceSuccesResult;
     }
         
     private async Task ClearArticleByProductIdAsync(Guid productId)

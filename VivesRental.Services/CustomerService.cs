@@ -1,5 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
+using Vives.Services.Model;
+using Vives.Services.Model.Extensions;
 using VivesRental.Model;
 using VivesRental.Repository.Core;
 using VivesRental.Services.Abstractions;
@@ -21,23 +23,40 @@ public class CustomerService : ICustomerService
     }
 
 
-    public Task<CustomerResult?> GetAsync(Guid id)
+    public async Task<ServiceResult<CustomerResult?>> GetAsync(Guid id)
     {
-        return _context.Customers
+        var customerDetails = await _context.Customers
             .Where(c => c.Id == id)
             .MapToResults()
             .FirstOrDefaultAsync();
+
+        var serviceResult = new ServiceResult<CustomerResult?>(customerDetails);
+
+        if (serviceResult.Data == null)
+        {
+            serviceResult.DataIsNull();
+        }            
+        return serviceResult;
+
     }
 
-    public Task<List<CustomerResult>> FindAsync(CustomerFilter? filter = null)
+    public async Task<ServiceResult<List<CustomerResult>>> FindAsync(CustomerFilter? filter = null)
     {
-        return _context.Customers
+        var customerDetails = await _context.Customers
             .ApplyFilter(filter)
             .MapToResults()
             .ToListAsync();
+
+        var serviceResult = new ServiceResult<List<CustomerResult?>>(customerDetails);
+
+        if (serviceResult.Data == null)
+        {
+            serviceResult.DataIsNull();
+        }
+        return serviceResult;
     }
 
-    public async Task<CustomerResult?> CreateAsync(CustomerRequest entity)
+    public async Task<ServiceResult<CustomerResult?>> CreateAsync(CustomerRequest entity)
     {
         var customer = new Customer
         {
@@ -50,10 +69,24 @@ public class CustomerService : ICustomerService
         _context.Customers.Add(customer);
         await _context.SaveChangesAsync();
 
-        return await GetAsync(customer.Id);
+        var customerResult = await GetAsync(customer.Id);
+        if (customerResult is null)
+        {
+            var serviceResult = new ServiceResult<CustomerResult>();
+            serviceResult.Messages.Add(new ServiceMessage
+
+            {
+                Code = "NotFound",
+                Message = "Person not found after create",
+                Type = ServiceMessageType.Error
+            });
+            return serviceResult;
+        }
+
+        return customerResult;
     }
 
-    public async Task<CustomerResult?> EditAsync(Guid id, CustomerRequest entity)
+    public async Task<ServiceResult<CustomerResult?>> EditAsync(Guid id, CustomerRequest entity)
     {
         //Get Product from unitOfWork
         var customer = await _context.Customers
@@ -61,7 +94,9 @@ public class CustomerService : ICustomerService
 
         if (customer == null)
         {
-            return null;
+            var serviceResult = new ServiceResult<CustomerResult>();
+            serviceResult.DataIsNull();
+            return serviceResult;
         }
 
         //Only update the properties we want to update
@@ -80,12 +115,18 @@ public class CustomerService : ICustomerService
     /// </summary>
     /// <param name="id">The id of the Customer</param>
     /// <returns>True if the customer was deleted</returns>
-    public async Task<bool> RemoveAsync(Guid id)
+    public async Task<ServiceResult> RemoveAsync(Guid id)
     {
+        var serviceResult = new ServiceResult();
         if (_context.Database.IsInMemory())
         {
             await RemoveInternalAsync(id);
-            return true;
+            serviceResult.Messages.Add(new ServiceMessage
+            {
+                Code = "Customer Deleted",
+                Message = "Customer Deleted."
+            });
+            return serviceResult;
         }
 
         await using var transaction = await _context.Database.BeginTransactionAsync();
@@ -94,12 +135,23 @@ public class CustomerService : ICustomerService
         {
             await RemoveInternalAsync(id);
             await transaction.CommitAsync();
-            return true;
+            await transaction.RollbackAsync();
+            serviceResult.Messages.Add(new ServiceMessage
+            {
+                Code = "Customer Deleted",
+                Message = "Customer Deleted."
+            });
+            return serviceResult;
         }
         catch
         {
             await transaction.RollbackAsync();
-            throw;
+            serviceResult.Messages.Add(new ServiceMessage
+            {
+                Code = "NothingChanged",
+                Message = "Nothing changed."
+            });
+            return serviceResult;
         }
     }
 

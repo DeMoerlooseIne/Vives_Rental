@@ -26,7 +26,7 @@ public class ArticleServiceTests
         var result = await articleService.RemoveAsync(article.Id);
 
         //Assert
-        Assert.IsTrue(result);
+        Assert.Equals(true, result);
     }
 
     [TestMethod]
@@ -54,7 +54,7 @@ public class ArticleServiceTests
         var result = await articleService.RemoveAsync(article.Id);
 
         //Assert
-        Assert.IsTrue(result);
+        Assert.Equals(true, result);
     }
 
     [TestMethod]
@@ -78,6 +78,6 @@ public class ArticleServiceTests
         var result = await articleService.UpdateStatusAsync(article.Id, ArticleStatus.Broken);
 
         //Assert
-        Assert.IsTrue(result);
+        Assert.Equals(true, result);
     }
 }

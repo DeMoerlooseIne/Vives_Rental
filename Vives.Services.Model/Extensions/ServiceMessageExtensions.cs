@@ -3,7 +3,7 @@
     public static class ServiceMessageExtensions
     {
         public static T JsonNull<T>(this T serviceResult)
-            where T: ServiceResult
+                   where T : ServiceResult
         {
             serviceResult.Messages.Add(new ServiceMessage
             {
@@ -15,7 +15,7 @@
         }
 
         public static T NotFound<T>(this T serviceResult, string entityName)
-            where T:ServiceResult
+            where T : ServiceResult
         {
             serviceResult.Messages.Add(new ServiceMessage
             {
@@ -27,12 +27,24 @@
         }
 
         public static T Unauthorized<T>(this T serviceResult)
-            where T: ServiceResult
+            where T : ServiceResult
         {
             serviceResult.Messages.Add(new ServiceMessage
             {
                 Code = "Unauthorized",
                 Message = "You are not authorized.",
+                Type = ServiceMessageType.Error
+            });
+            return serviceResult;
+        }
+
+        public static T DataIsNull<T>(this T serviceResult)
+            where T : ServiceResult
+        {
+            serviceResult.Messages.Add(new ServiceMessage()
+            {
+                Code = "NullData",
+                Message = "Data is null.",
                 Type = ServiceMessageType.Error
             });
             return serviceResult;
