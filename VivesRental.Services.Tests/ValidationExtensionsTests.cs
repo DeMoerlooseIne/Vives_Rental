@@ -17,7 +17,7 @@ public class ValidationExtensionsTests
         var result = product.IsValid();
 
         //Assert
-        Assert.IsTrue(result);
+        Assert.IsTrue(result.IsValid);
     }
 
     [TestMethod]
@@ -30,7 +30,7 @@ public class ValidationExtensionsTests
         var result = product.IsValid();
 
         //Assert
-        Assert.IsFalse(result);
+        Assert.IsFalse(result.IsValid);
     }
 
     [TestMethod]
@@ -43,7 +43,7 @@ public class ValidationExtensionsTests
         var result = customer.IsValid();
 
         //Assert
-        Assert.IsTrue(result);
+        Assert.IsTrue(result.IsValid);
     }
 
     [TestMethod]
@@ -56,7 +56,7 @@ public class ValidationExtensionsTests
         var result = customer.IsValid();
 
         //Assert
-        Assert.IsFalse(result);
+        Assert.IsFalse(result.IsValid);
     }
 
     [TestMethod]
@@ -72,7 +72,7 @@ public class ValidationExtensionsTests
         var result = article.IsValid();
 
         //Assert
-        Assert.IsTrue(result);
+        Assert.IsTrue(result.IsValid);
     }
 
     [TestMethod]
@@ -85,7 +85,7 @@ public class ValidationExtensionsTests
         var result = article.IsValid();
 
         //Assert
-        Assert.IsFalse(result);
+        Assert.IsFalse(result.IsValid);
     }
 
     [TestMethod]
@@ -101,7 +101,7 @@ public class ValidationExtensionsTests
         var result = order.IsValid();
 
         //Assert
-        Assert.IsTrue(result);
+        Assert.IsTrue(result.IsValid);
     }
 
     [TestMethod]
@@ -114,7 +114,7 @@ public class ValidationExtensionsTests
         var result = order.IsValid();
 
         //Assert
-        Assert.IsFalse(result);
+        Assert.IsFalse(result.IsValid);
     }
 
     [TestMethod]
@@ -136,7 +136,7 @@ public class ValidationExtensionsTests
         var result = orderLine.IsValid();
 
         //Assert
-        Assert.IsTrue(result);
+        Assert.IsTrue(result.IsValid);
     }
 
     [TestMethod]
@@ -149,7 +149,7 @@ public class ValidationExtensionsTests
         var result = order.IsValid();
 
         //Assert
-        Assert.IsFalse(result);
+        Assert.IsFalse(result.IsValid);
     }
 
     [TestMethod]
@@ -170,7 +170,7 @@ public class ValidationExtensionsTests
         var result = entity.IsValid();
 
         //Assert
-        Assert.IsTrue(result);
+        Assert.IsTrue(result.IsValid);
     }
 
     [TestMethod]
@@ -183,6 +183,6 @@ public class ValidationExtensionsTests
         var result = entity.IsValid();
 
         //Assert
-        Assert.IsFalse(result);
+        Assert.IsFalse(result.IsValid);
     }
 }

@@ -3,124 +3,177 @@
 namespace VivesRental.Services.Extensions;
 public static class ValidationExtensions
 {
-    public static bool IsValid(this Product product)
+    public class ValidationMessage
     {
+        public bool IsValid { get; set; }
+        public string ErrorMessage { get; set; }
+    }
+
+    public static ValidationMessage IsValid(this Product product)
+    {
+        ValidationMessage validationMessage = new ValidationMessage() { IsValid = true };
+
         if (string.IsNullOrWhiteSpace(product.Name))
         {
-            return false;
+            validationMessage.ErrorMessage = "Please enter a name. The name is invalid.";
+            validationMessage.IsValid = false;
+            return validationMessage;
         }
 
-        return true;
+        return validationMessage;
     }
 
-    public static bool IsValid(this Article article)
+    public static ValidationMessage IsValid(this Article article)
     {
+        ValidationMessage validationMessage = new ValidationMessage() { IsValid = true };
+
         if (article.ProductId == Guid.Empty)
         {
-            return false;
+            validationMessage.ErrorMessage = "Please fill in a productid. The productid is invalid.";
+            validationMessage.IsValid = false;
+            return validationMessage;
         }
-            
-        return true;
+        return validationMessage;
     }
 
-    public static bool IsValid(this Order order)
+    public static ValidationMessage IsValid(this Order order)
     {
+        ValidationMessage validationMessage = new ValidationMessage() { IsValid = true };
+
         if (order.CustomerId == Guid.Empty)
         {
-            return false;
+            validationMessage.ErrorMessage = "Please fill in a customerid. The customerid is invalid.";
+            validationMessage.IsValid = false;
+            return validationMessage;
         }
 
         if (string.IsNullOrWhiteSpace(order.CustomerFirstName))
         {
-            return false;
+            validationMessage.ErrorMessage = "Please fill in a the firstname of the customer. The firstname is invalid.";
+            validationMessage.IsValid = false;
+            return validationMessage;
         }
 
         if (string.IsNullOrWhiteSpace(order.CustomerLastName))
         {
-            return false;
+            validationMessage.ErrorMessage = "Please fill in a the lastname of the customer. The lastname is invalid.";
+            validationMessage.IsValid = false;
+            return validationMessage;
         }
 
         if (string.IsNullOrWhiteSpace(order.CustomerEmail))
         {
-            return false;
+            validationMessage.ErrorMessage = "Please fill in a customeremail. The customeremail is invalid.";
+            validationMessage.IsValid = false;
+            return validationMessage;
         }
 
         if (order.CreatedAt == DateTime.MinValue)
         {
-            return false;
+            validationMessage.ErrorMessage = "Please fill in a correct date. The date is invalid.";
+            validationMessage.IsValid = false;
+            return validationMessage;
         }
 
-        return true;
+        return validationMessage;
     }
 
-    public static bool IsValid(this OrderLine orderLine)
+    public static ValidationMessage IsValid(this OrderLine orderLine)
     {
+        ValidationMessage validationMessage = new ValidationMessage() { IsValid = true };
+
         if (orderLine.OrderId == Guid.Empty)
         {
-            return false;
+            validationMessage.ErrorMessage = "Please fill in the correct orderid. The orderid is invalid.";
+            validationMessage.IsValid = false;
+            return validationMessage;
         }
 
         if (orderLine.ArticleId == Guid.Empty)
         {
-            return false;
+            validationMessage.ErrorMessage = "Please fill in the correct articleid. The articleid is invalid.";
+            validationMessage.IsValid = false;
+            return validationMessage;
         }
 
         if (string.IsNullOrWhiteSpace(orderLine.ProductName))
         {
-            return false;
+            validationMessage.ErrorMessage = "Please fill in a correct productname. The productname is invalid.";
+            validationMessage.IsValid = false;
+            return validationMessage;
         }
 
         if (orderLine.RentedAt == DateTime.MinValue)
         {
-            return false;
+            validationMessage.ErrorMessage = "Please fill in a correct date. The date is invalid.";
+            validationMessage.IsValid = false;
+            return validationMessage;
         }
 
         if (orderLine.ExpiresAt == DateTime.MinValue)
         {
-            return false;
+            validationMessage.ErrorMessage = "Please fill in a correct date. The date is invalid.";
+            validationMessage.IsValid = false;
+            return validationMessage;
         }
 
-        return true;
+        return validationMessage;
     }
 
-    public static bool IsValid(this Customer customer)
+    public static ValidationMessage IsValid(this Customer customer)
     {
+        ValidationMessage validationMessage = new ValidationMessage() { IsValid = true };
+
         if (string.IsNullOrWhiteSpace(customer.FirstName))
         {
-            return false;
+            validationMessage.ErrorMessage = "Please fill in a correct firstname. The firstname is invalid.";
+            validationMessage.IsValid = false;
+            return validationMessage;
         }
 
         if (string.IsNullOrWhiteSpace(customer.LastName))
         {
-            return false;
+            validationMessage.ErrorMessage = "Please fill in a correct lastname. The lastname is invalid.";
+            validationMessage.IsValid = false;
+            return validationMessage;
         }
 
         if (string.IsNullOrWhiteSpace(customer.Email))
         {
-            return false;
+            validationMessage.ErrorMessage = "Please fill in a correct email. The customeremail is invalid.";
+            validationMessage.IsValid = false;
+            return validationMessage;
         }
 
-        return true;
+        return validationMessage;
     }
 
-    public static bool IsValid(this ArticleReservation articleReservation)
+    public static ValidationMessage IsValid(this ArticleReservation articleReservation)
     {
+        ValidationMessage validationMessage = new ValidationMessage() { IsValid = true };
+
         if (articleReservation.ArticleId == Guid.Empty)
         {
-            return false;
+            validationMessage.ErrorMessage = "Please fill in the correct articleid. The articleid is invalid.";
+            validationMessage.IsValid = false;
+            return validationMessage;
         }
 
         if (articleReservation.CustomerId == Guid.Empty)
         {
-            return false;
+            validationMessage.ErrorMessage = "Please fill in the correct customerid. The customerid is invalid.";
+            validationMessage.IsValid = false;
+            return validationMessage;
         }
 
         //Do not allow an Until date before From date
         if (articleReservation.UntilDateTime < articleReservation.FromDateTime)
         {
-            return false;
+            validationMessage.ErrorMessage = "Please fill in a correct date. The date is invalid.";
+            validationMessage.IsValid = false;
+            return validationMessage;
         }
 
-        return true;
+        return validationMessage;
     }
 }

@@ -21,7 +21,6 @@ public class ProductService : IProductService
         _context = context;
     }
 
-
     public async Task<ServiceResult<ProductResult?>> GetAsync(Guid id)
     {
         var productDetails = await _context.Products
@@ -84,7 +83,9 @@ public class ProductService : IProductService
 
         if (product == null)
         {
-            return null;
+            var serviceResult = new ServiceResult<ProductResult?>();
+            serviceResult.DataIsNull();
+            return serviceResult;
         }
             
         product.Name = entity.Name;
@@ -111,14 +112,14 @@ public class ProductService : IProductService
         {
             _context.Products.Attach(product);
             _context.Products.Remove(product);
-            var serviceResult = new ServiceResult<bool>();
+            var serviceResult = new ServiceResult();
             var changes = await _context.SaveChangesAsync();
             if (changes == 0)
             {
                 serviceResult.Messages.Add(new ServiceMessage
                 {
                     Code = "ProductRemoved",
-                    Message = "The product was succesfully deleted.",
+                    Message = "The product was not deleted.",
                     Type = ServiceMessageType.Error
                 });
             }
@@ -131,7 +132,7 @@ public class ProductService : IProductService
         {
             await RemoveInternalAsync(id);
             await transaction.CommitAsync();
-            var serviceResult = new ServiceResult<bool>(true);
+            var serviceResult = new ServiceResult();
             serviceResult.Messages.Add(new ServiceMessage()
             {
                 Code = "ProductRemoved",
@@ -167,11 +168,11 @@ public class ProductService : IProductService
     /// This is limited to maximum 10.000
     /// </summary>
     /// <returns>True if articles are added</returns>
-    public async Task<ServiceResult<bool>> GenerateArticlesAsync(Guid productId, int amount)
+    public async Task<ServiceResult> GenerateArticlesAsync(Guid productId, int amount)
     {
         if (amount <= 0 || amount > 10000) //Set a limit to 10K
         {
-            var serviceResult = new ServiceResult<bool>();
+            var serviceResult = new ServiceResult();
             serviceResult.Messages.Add(new ServiceMessage()
             {
                 Code = "IncorrectAmount",
@@ -192,7 +193,7 @@ public class ProductService : IProductService
 
         var numberOfObjectsUpdated = await _context.SaveChangesAsync();
 
-        var serviceSuccesResult = new ServiceResult<bool>(numberOfObjectsUpdated > 0);
+        var serviceSuccesResult = new ServiceResult();
         serviceSuccesResult.Messages.Add(new ServiceMessage()
         {
             Code = "Success",

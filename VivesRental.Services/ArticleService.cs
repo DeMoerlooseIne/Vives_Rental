@@ -126,7 +126,7 @@ public class ArticleService : IArticleService
         if (_context.Database.IsInMemory())
         {
             await RemoveInternalAsync(id);
-            return new ServiceResult<bool>(true);
+            return new ServiceResult();
         }
 
         await using var transaction = await _context.Database.BeginTransactionAsync();
@@ -135,7 +135,7 @@ public class ArticleService : IArticleService
         {
             await RemoveInternalAsync(id);
             await transaction.CommitAsync();
-            return new ServiceResult<bool>(true);
+            return new ServiceResult();
         }
         catch
         {

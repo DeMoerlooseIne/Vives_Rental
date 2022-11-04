@@ -12,6 +12,6 @@ public interface IProductService
     Task<ServiceResult<ProductResult?>> CreateAsync(ProductRequest entity);
     Task<ServiceResult<ProductResult?>> EditAsync(Guid id, ProductRequest entity);
     Task<ServiceResult> RemoveAsync(Guid id);
-    Task<ServiceResult<bool>> GenerateArticlesAsync(Guid productId, int amount);
+    Task<ServiceResult> GenerateArticlesAsync(Guid productId, int amount);
 
 }

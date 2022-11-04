@@ -8,8 +8,8 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\VivesRental.Services\VivesRental.Services.csproj" />
-    <ProjectReference Include="..\VivesRental.Tests.Data\VivesRental.Tests.Data.csproj" />
+    <ProjectReference Include="..\VivesRental.Repository\VivesRental.Repository.csproj" />
+    <ProjectReference Include="..\VivesRental.Sdk\VivesRental.Sdk.csproj" />
   </ItemGroup>
 
 </Project>

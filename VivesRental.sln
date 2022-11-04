@@ -39,10 +39,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Vives.Services.Model", "Viv
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Vives", "Vives", "{1AA736CB-02BC-4E9C-9E3A-52681DD88DB0}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Console", "Console", "{860363B1-FD4D-4217-88DA-3B82905199F1}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "VivesRental.Console", "VivesRental.Console\VivesRental.Console.csproj", "{18DFEF77-9CEA-4B2A-B347-C6E8F16FAF04}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -101,10 +97,6 @@ Global
 		{7508D43E-B6F5-4BCA-8CB9-8BFA95EF4841}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7508D43E-B6F5-4BCA-8CB9-8BFA95EF4841}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7508D43E-B6F5-4BCA-8CB9-8BFA95EF4841}.Release|Any CPU.Build.0 = Release|Any CPU
-		{18DFEF77-9CEA-4B2A-B347-C6E8F16FAF04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{18DFEF77-9CEA-4B2A-B347-C6E8F16FAF04}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{18DFEF77-9CEA-4B2A-B347-C6E8F16FAF04}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{18DFEF77-9CEA-4B2A-B347-C6E8F16FAF04}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -123,7 +115,6 @@ Global
 		{8366A1D3-6ACB-4E2C-995D-7AEE220CCB14} = {EECCEECC-4891-4025-B1A0-9FC33F038004}
 		{9DBFFDC0-E61A-490D-B446-FF40D4CE64BA} = {EECCEECC-4891-4025-B1A0-9FC33F038004}
 		{7508D43E-B6F5-4BCA-8CB9-8BFA95EF4841} = {1AA736CB-02BC-4E9C-9E3A-52681DD88DB0}
-		{18DFEF77-9CEA-4B2A-B347-C6E8F16FAF04} = {860363B1-FD4D-4217-88DA-3B82905199F1}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8597BBC0-749A-49A3-A0E6-3DCE877EDBA5}
