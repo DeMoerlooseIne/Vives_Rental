@@ -6,7 +6,7 @@ public static class ValidationExtensions
     public class ValidationMessage
     {
         public bool IsValid { get; set; }
-        public string ErrorMessage { get; set; }
+        public string? ErrorMessage { get; set; }
     }
 
     public static ValidationMessage IsValid(this Product product)
@@ -19,7 +19,6 @@ public static class ValidationExtensions
             validationMessage.IsValid = false;
             return validationMessage;
         }
-
         return validationMessage;
     }
 
@@ -74,7 +73,6 @@ public static class ValidationExtensions
             validationMessage.IsValid = false;
             return validationMessage;
         }
-
         return validationMessage;
     }
 
@@ -116,7 +114,6 @@ public static class ValidationExtensions
             validationMessage.IsValid = false;
             return validationMessage;
         }
-
         return validationMessage;
     }
 
@@ -144,7 +141,6 @@ public static class ValidationExtensions
             validationMessage.IsValid = false;
             return validationMessage;
         }
-
         return validationMessage;
     }
 
@@ -173,7 +169,6 @@ public static class ValidationExtensions
             validationMessage.IsValid = false;
             return validationMessage;
         }
-
         return validationMessage;
     }
 }
