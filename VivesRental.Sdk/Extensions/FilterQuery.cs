@@ -14,7 +14,7 @@ namespace VivesRental.Sdk.Extensions
             {
                 return "";
             }
-            var qs = new StringBuilder($"{route}?");
+            var sb = new StringBuilder($"{route}?");
 
             var objType = filterObject.GetType();
 
@@ -25,9 +25,9 @@ namespace VivesRental.Sdk.Extensions
             {
                 var name = prop.Name;
                 var value = prop.GetValue(filterObject);
-                qs.Append($"{name}={value}&");
+                sb.Append($"{name}={value}&");
             }
-            return qs.ToString().TrimEnd('&');
+            return sb.ToString().TrimEnd('&');
         }
     }
 }
