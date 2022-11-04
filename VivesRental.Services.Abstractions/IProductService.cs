@@ -7,7 +7,7 @@ namespace VivesRental.Services.Abstractions;
 
 public interface IProductService
 {
-    Task<ServiceResult<ProductResult?>> GetAsync(Guid id);
+    Task<ProductResult?> GetAsync(Guid id);
     Task<ServiceResult<List<ProductResult>>> FindAsync(ProductFilter? filter);
     Task<ServiceResult<ProductResult?>> CreateAsync(ProductRequest entity);
     Task<ServiceResult<ProductResult?>> EditAsync(Guid id, ProductRequest entity);

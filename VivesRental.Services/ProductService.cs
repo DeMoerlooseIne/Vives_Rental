@@ -21,20 +21,30 @@ public class ProductService : IProductService
         _context = context;
     }
 
-    public async Task<ServiceResult<ProductResult?>> GetAsync(Guid id)
+    public async Task<ProductResult?> GetAsync(Guid id)
     {
         var productDetails = await _context.Products
             .Where(p => p.Id == id)
             .MapToResults()
             .FirstOrDefaultAsync();
 
-        var serviceResult = new ServiceResult<ProductResult?>(productDetails);
+        return productDetails;
+        //var serviceResult = new ServiceResult<ProductResult?>(productDetails);
 
-        if (serviceResult.Data == null)
-        {
-            serviceResult.DataIsNull();
-        }
-        return serviceResult;
+        //if (serviceResult.Data == null)
+        //{
+        //    serviceResult.DataIsNull();
+        //}
+
+        //var msg = ValidationExtensions.IsValid(productDetails);
+        //if (!msg.IsValid)
+        //{
+        //    serviceResult.IsSuccess = false;
+        //    serv
+        //}
+
+
+        //return serviceResult;
     }
 
     public async Task<ServiceResult<List<ProductResult>>> FindAsync(ProductFilter? filter = null)
@@ -64,29 +74,27 @@ public class ProductService : IProductService
             RentalExpiresAfterDays = entity.RentalExpiresAfterDays
         };
 
-        if (product == null)
-        {
-            var serviceResult = new ServiceResult<ProductResult?>();
-            serviceResult.DataIsNull();
-            return serviceResult;
-        }
+        var validationResult = ValidationExtensions.IsValid(product);
 
-        _context.Products.Add(product);
-        await _context.SaveChangesAsync();
-        return await GetAsync(product.Id);
+        if (validationResult.IsSuccess)
+        {
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync();
+            return new ServiceResult<ProductResult?>(await GetAsync(product.Id));
+        }
+        else
+        {
+            return new ServiceResult<ProductResult?>
+            {
+                Messages = validationResult.Messages
+            };
+        }
     }
 
     public async Task<ServiceResult<ProductResult?>> EditAsync(Guid id, ProductRequest entity)
     {
         var product = await _context.Products
             .FirstOrDefaultAsync(p => p.Id == id);
-
-        if (product == null)
-        {
-            var serviceResult = new ServiceResult<ProductResult?>();
-            serviceResult.DataIsNull();
-            return serviceResult;
-        }
             
         product.Name = entity.Name;
         product.Description = entity.Description;
@@ -94,9 +102,20 @@ public class ProductService : IProductService
         product.Publisher = entity.Publisher;
         product.RentalExpiresAfterDays = entity.RentalExpiresAfterDays;
 
-        await _context.SaveChangesAsync();
+        var validationResult = ValidationExtensions.IsValid(product);
 
-        return await GetAsync(product.Id);
+        if (validationResult.IsSuccess)
+        {
+            await _context.SaveChangesAsync();
+            return new ServiceResult<ProductResult?>(await GetAsync(product.Id));
+        }
+        else
+        {
+            return new ServiceResult<ProductResult?>
+            {
+                Messages = validationResult.Messages
+            };
+        }
     }
 
     /// <summary>

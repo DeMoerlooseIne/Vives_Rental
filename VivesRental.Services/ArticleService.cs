@@ -23,20 +23,14 @@ public class ArticleService : IArticleService
         _context = context;
     }
 
-    public async Task<ServiceResult<ArticleResult?>> GetAsync(Guid id)
+    public async Task<ArticleResult?> GetAsync(Guid id)
     {
         var articleDetails = await _context.Articles
             .Where(a => a.Id == id)
             .MapToResults()
             .FirstOrDefaultAsync();
 
-        var serviceResult = new ServiceResult<ArticleResult?>(articleDetails);
-
-        if (serviceResult.Data == null)
-        {
-            serviceResult.DataIsNull();
-        }
-        return serviceResult;
+        return articleDetails;
     }
         
     public async Task<ServiceResult<List<ArticleResult>>> FindAsync(ArticleFilter? filter = null)
@@ -64,18 +58,21 @@ public class ArticleService : IArticleService
             Status = entity.Status
         };
 
-        _context.Articles.Add(article);
+        var validationResult = ValidationExtensions.IsValid(article);
 
-        await _context.SaveChangesAsync();
-
-        var articleResult = await GetAsync(article.Id);
-        if (articleResult is null)
+        if (validationResult.IsSuccess)
         {
-            var serviceResult = new ServiceResult<ArticleResult?>();
-            serviceResult.NotFound("article");
-            return serviceResult;
+            _context.Articles.Add(article);
+            await _context.SaveChangesAsync();
+            return new ServiceResult<ArticleResult?>(await GetAsync(article.Id));
         }
-        return articleResult;
+        else
+        {
+            return new ServiceResult<ArticleResult?>
+            {
+                Messages = validationResult.Messages
+            };
+        }
     }
 
     public async Task<ServiceResult> UpdateStatusAsync(Guid articleId, ArticleStatus status)

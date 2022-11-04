@@ -45,7 +45,7 @@
             {
                 Code = "SuccesfullyAdded",
                 Message = $"The {entityName} was succesfully added.",
-                Type = ServiceMessageType.Error
+                Type = ServiceMessageType.Info
             });
             return serviceResult;
         }

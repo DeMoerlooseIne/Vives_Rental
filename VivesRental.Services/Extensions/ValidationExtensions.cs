@@ -1,6 +1,9 @@
 ﻿using VivesRental.Model;
+using Vives.Services.Model;
+using VivesRental.Services.Model.Results;
 
 namespace VivesRental.Services.Extensions;
+
 public static class ValidationExtensions
 {
     public class ValidationMessage
@@ -9,29 +12,54 @@ public static class ValidationExtensions
         public string? ErrorMessage { get; set; }
     }
 
-    public static ValidationMessage IsValid(this Product product)
+    public class ValidationResult : ServiceResult
     {
-        ValidationMessage validationMessage = new ValidationMessage() { IsValid = true };
-
-        if (string.IsNullOrWhiteSpace(product.Name))
-        {
-            validationMessage.ErrorMessage = $"Please enter a name. {product.Name} is invalid.";
-            validationMessage.IsValid = false;
-            return validationMessage;
-        }
-        return validationMessage;
     }
 
-    public static ValidationMessage IsValid(this Article article)
+    public static ValidationResult IsValid(this Product product)
     {
-        ValidationMessage validationMessage = new ValidationMessage() { IsValid = true };
+        ValidationResult validMessage = new();
+
+        if (product == null)
+        {
+            validMessage.Messages.Add(new ServiceMessage
+            {
+                Code = "DataIsNull",
+                Message = "The product is null.",
+                Type = ServiceMessageType.Error
+            });
+        }
+        else
+        {
+            if (string.IsNullOrWhiteSpace(product.Name))
+            {
+                validMessage.Messages.Add(new ServiceMessage
+                {
+                    Code = "NameIsNull",
+                    Message = "The product name is missing or just whitespace.",
+                    Type = ServiceMessageType.Error
+                });
+            }
+        }
+
+        return validMessage;
+    }
+
+    public static ValidationResult IsValid(this Article article)
+    {
+        ValidationResult validationMessage = new();
+
 
         if (article.ProductId == Guid.Empty)
         {
-            validationMessage.ErrorMessage = $"Please fill in a productid. {article.ProductId} is invalid.";
-            validationMessage.IsValid = false;
-            return validationMessage;
+            validationMessage.Messages.Add(new ServiceMessage
+            {
+                Code = "InvalidGUID",
+                Message = "The article product ID is invalid.",
+                Type = ServiceMessageType.Error
+            });
         }
+
         return validationMessage;
     }
 

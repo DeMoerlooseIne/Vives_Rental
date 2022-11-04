@@ -17,7 +17,7 @@ public class ValidationExtensionsTests
         var result = product.IsValid();
 
         //Assert
-        Assert.IsTrue(result.IsValid);
+        Assert.IsTrue(result.IsSuccess);
     }
 
     [TestMethod]
@@ -30,7 +30,7 @@ public class ValidationExtensionsTests
         var result = product.IsValid();
 
         //Assert
-        Assert.IsFalse(result.IsValid);
+        Assert.IsFalse(result.IsSuccess);
     }
 
     [TestMethod]
@@ -72,7 +72,7 @@ public class ValidationExtensionsTests
         var result = article.IsValid();
 
         //Assert
-        Assert.IsTrue(result.IsValid);
+        Assert.IsTrue(result.IsSuccess);
     }
 
     [TestMethod]
@@ -85,7 +85,7 @@ public class ValidationExtensionsTests
         var result = article.IsValid();
 
         //Assert
-        Assert.IsFalse(result.IsValid);
+        Assert.IsFalse(result.IsSuccess);
     }
 
     [TestMethod]

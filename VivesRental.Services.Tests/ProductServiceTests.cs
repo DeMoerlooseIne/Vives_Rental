@@ -60,7 +60,7 @@ public class ProductServiceTests
 
         //Assert
         Assert.IsNotNull(serviceProduct);
-        Assert.AreEqual(product.Id, serviceProduct.Data.Id);
+        Assert.AreEqual(product.Id, serviceProduct.Id);
     }
 
 
