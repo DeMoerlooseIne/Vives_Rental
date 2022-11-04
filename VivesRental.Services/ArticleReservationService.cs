@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Vives.Services.Model;
+using Vives.Services.Model.Extensions;
 using VivesRental.Model;
 using VivesRental.Repository.Core;
 using VivesRental.Services.Abstractions;
@@ -21,35 +22,33 @@ public class ArticleReservationService : IArticleReservationService
     }
     public async Task<ServiceResult<ArticleReservationResult?>> GetAsync(Guid id)
     {
-        var serviceResult = new ServiceResult<ArticleReservationResult?>();
-
         var articleReservationDetails = await _context.ArticleReservations
             .Where(ar => ar.Id == id)
             .MapToResults()
             .FirstOrDefaultAsync();
 
-        if (serviceResult.IsSuccess)
-            serviceResult.Messages.AsParallel();
-        else
-            serviceResult.Data.Equals(articleReservationDetails);
+        var serviceResult = new ServiceResult<ArticleReservationResult?>(articleReservationDetails);
 
+        if (serviceResult.Data == null)
+        {
+            serviceResult.DataIsNull();
+        }
         return serviceResult;
     }
         
     public async Task<ServiceResult<List<ArticleReservationResult>>> FindAsync(ArticleReservationFilter? filter = null)
     {
-        var serviceResult = new ServiceResult<List<ArticleReservationResult?>>();
-
         var articleReservationDetails = await _context.ArticleReservations
             .ApplyFilter(filter)
             .MapToResults()
             .ToListAsync();
 
-        if (serviceResult.IsSuccess)
-            serviceResult.Messages.AsParallel();
-        else
-            serviceResult.Data.Equals(articleReservationDetails);
+        var serviceResult = new ServiceResult<List<ArticleReservationResult>>(articleReservationDetails);
 
+        if (serviceResult.Data == null)
+        {
+            serviceResult.DataIsNull();
+        }
         return serviceResult;
     }
         
@@ -83,16 +82,18 @@ public class ArticleReservationService : IArticleReservationService
         var articleReservation = new ArticleReservation { Id = id };
         _context.ArticleReservations.Attach(articleReservation);
         _context.ArticleReservations.Remove(articleReservation);
-
-        await _context.SaveChangesAsync();
-
+        
         var serviceResult = new ServiceResult();
-        serviceResult.Messages.Add(new ServiceMessage()
+        var changes = await _context.SaveChangesAsync();
+        if (changes is 0)
         {
-            Code = "ArticleReservationDeleted",
-            Message = "ArticleReservation was successfully deleted.",
-            Type = ServiceMessageType.Info
-        });
+            serviceResult.Messages.Add(new ServiceMessage
+            {
+                Code = "NothingChanged",
+                Message = "Something happend... nothing changed in the database.",
+                Type = ServiceMessageType.Error
+            });
+        }
         return serviceResult;
     }
 }

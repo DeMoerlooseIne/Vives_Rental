@@ -77,16 +77,12 @@ public class OrderService : IOrderService
         var numberOfObjectsUpdated = await _context.SaveChangesAsync();
         if (numberOfObjectsUpdated > 0)
         {
-            return await GetAsync(order.Id);
+            var serviceResult = await GetAsync(order.Id);
+            return serviceResult;
         }
 
         var failedResult = new ServiceResult<OrderResult?>(null);
-        failedResult.Messages.Add(new ServiceMessage()
-        {
-            Code = "Not created",
-            Message = "Something went wrong when trying to create the order.",
-            Type = ServiceMessageType.Error
-        });
+        failedResult.ErrorNoChanges();
         return failedResult;
     }
 
@@ -101,14 +97,11 @@ public class OrderService : IOrderService
         }
 
         var numberOfObjectsUpdated = await _context.SaveChangesAsync();
-
-        var serviceResult = new ServiceResult<bool>(numberOfObjectsUpdated > 0);
-        serviceResult.Messages.Add(new ServiceMessage()
+        if (numberOfObjectsUpdated > 0)
         {
-            Code = "Returned",
-            Message = $"Successfully returned {numberOfObjectsUpdated} items.",
-            Type = ServiceMessageType.Info
-        });
-        return serviceResult;
+            var serviceResult = new ServiceResult();
+            serviceResult.ErrorNoChanges();
+        }
+        return new ServiceResult();
     }
 }

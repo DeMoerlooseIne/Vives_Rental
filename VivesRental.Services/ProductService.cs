@@ -46,7 +46,7 @@ public class ProductService : IProductService
 
         var serviceResult = new ServiceResult<List<ProductResult>>(productDetails);
 
-        if (serviceResult.Data is null)
+        if (serviceResult.Data == null)
         {
             serviceResult.DataIsNull();
         }

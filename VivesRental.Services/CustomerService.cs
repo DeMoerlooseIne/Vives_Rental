@@ -47,7 +47,7 @@ public class CustomerService : ICustomerService
             .MapToResults()
             .ToListAsync();
 
-        var serviceResult = new ServiceResult<List<CustomerResult?>>(customerDetails);
+        var serviceResult = new ServiceResult<List<CustomerResult>>(customerDetails);
 
         if (serviceResult.Data == null)
         {
@@ -72,18 +72,12 @@ public class CustomerService : ICustomerService
         var customerResult = await GetAsync(customer.Id);
         if (customerResult is null)
         {
-            var serviceResult = new ServiceResult<CustomerResult>();
-            serviceResult.Messages.Add(new ServiceMessage
-
-            {
-                Code = "NotFound",
-                Message = "Person not found after create",
-                Type = ServiceMessageType.Error
-            });
+            var serviceResult = new ServiceResult<CustomerResult?>();
+            serviceResult.NotFound("customer");
             return serviceResult;
         }
-
-        return customerResult;
+        var succesServiceResult = new ServiceResult<CustomerResult?>();
+        return succesServiceResult;
     }
 
     public async Task<ServiceResult<CustomerResult?>> EditAsync(Guid id, CustomerRequest entity)
@@ -94,7 +88,7 @@ public class CustomerService : ICustomerService
 
         if (customer == null)
         {
-            var serviceResult = new ServiceResult<CustomerResult>();
+            var serviceResult = new ServiceResult<CustomerResult?>();
             serviceResult.DataIsNull();
             return serviceResult;
         }
@@ -121,11 +115,7 @@ public class CustomerService : ICustomerService
         if (_context.Database.IsInMemory())
         {
             await RemoveInternalAsync(id);
-            serviceResult.Messages.Add(new ServiceMessage
-            {
-                Code = "Customer Deleted",
-                Message = "Customer Deleted."
-            });
+            serviceResult.SuccesfullyDeleted("customer");
             return serviceResult;
         }
 
@@ -136,21 +126,13 @@ public class CustomerService : ICustomerService
             await RemoveInternalAsync(id);
             await transaction.CommitAsync();
             await transaction.RollbackAsync();
-            serviceResult.Messages.Add(new ServiceMessage
-            {
-                Code = "Customer Deleted",
-                Message = "Customer Deleted."
-            });
+            serviceResult.SuccesfullyDeleted("customer");
             return serviceResult;
         }
         catch
         {
             await transaction.RollbackAsync();
-            serviceResult.Messages.Add(new ServiceMessage
-            {
-                Code = "NothingChanged",
-                Message = "Nothing changed."
-            });
+            serviceResult.NoChanges();
             return serviceResult;
         }
     }

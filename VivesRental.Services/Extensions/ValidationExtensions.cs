@@ -15,7 +15,7 @@ public static class ValidationExtensions
 
         if (string.IsNullOrWhiteSpace(product.Name))
         {
-            validationMessage.ErrorMessage = "Please enter a name. The name is invalid.";
+            validationMessage.ErrorMessage = $"Please enter a name. {product.Name} is invalid.";
             validationMessage.IsValid = false;
             return validationMessage;
         }
@@ -28,7 +28,7 @@ public static class ValidationExtensions
 
         if (article.ProductId == Guid.Empty)
         {
-            validationMessage.ErrorMessage = "Please fill in a productid. The productid is invalid.";
+            validationMessage.ErrorMessage = $"Please fill in a productid. {article.ProductId} is invalid.";
             validationMessage.IsValid = false;
             return validationMessage;
         }

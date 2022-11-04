@@ -72,12 +72,7 @@ public class ArticleService : IArticleService
         if (articleResult is null)
         {
             var serviceResult = new ServiceResult<ArticleResult?>();
-            serviceResult.Messages.Add(new ServiceMessage
-            {
-                Code = "NotFound",
-                Message = "Person not found after create",
-                Type = ServiceMessageType.Error
-            });
+            serviceResult.NotFound("article");
             return serviceResult;
         }
         return articleResult;
@@ -93,12 +88,7 @@ public class ArticleService : IArticleService
         if (article == null)
         {
             var serviceResult = new ServiceResult();
-            serviceResult.Messages.Add(new ServiceMessage()
-            {
-                Code = "Bad Id",
-                Message = "The given id gave no result.",
-                Type = ServiceMessageType.Error
-            });
+            serviceResult.NotFound("article");
             return serviceResult;
         }
 

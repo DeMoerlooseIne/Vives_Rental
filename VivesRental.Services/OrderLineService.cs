@@ -42,7 +42,7 @@ public class OrderLineService : IOrderLineService
             .MapToResults()
             .ToListAsync();
 
-        var serviceResult = new ServiceResult<List<OrderLineResult>>();
+        var serviceResult = new ServiceResult<List<OrderLineResult>>(orderLineDetails);
         
         if (serviceResult.Data == null)
         {
@@ -67,14 +67,9 @@ public class OrderLineService : IOrderLineService
         if (article == null)
         {
             //Article does not exist or is not available.
-            var result = new ServiceResult();
-            result.Messages.Add(new ServiceMessage()
-            {
-                Code = "ArticleNotFound",
-                Message = "The article does not exist or is not available.",
-                Type = ServiceMessageType.Error
-            });
-            return result;
+            var serviceResult = new ServiceResult();
+            serviceResult.NotFound("article");
+            return serviceResult;
         }
 
         var orderLine = article.CreateOrderLine(orderId);
@@ -83,12 +78,7 @@ public class OrderLineService : IOrderLineService
         await _context.SaveChangesAsync();
 
         var successResult = new ServiceResult();
-        successResult.Messages.Add(new ServiceMessage()
-        {
-            Code = "success",
-            Message = "The OrderLine wes successfully added.",
-            Type = ServiceMessageType.Info
-        });
+        successResult.SuccesfullyAdded("orderline");
         return successResult;
 
     }
@@ -109,14 +99,9 @@ public class OrderLineService : IOrderLineService
         //If the amount of articles is not the same as the requested ids, some articles are not available anymore
         if (articleIds.Count != articles.Count)
         {
-            var result = new ServiceResult();
-            result.Messages.Add(new ServiceMessage()
-            {
-                Code = "ArticleNotFound",
-                Message = "Article is not available anymore.",
-                Type = ServiceMessageType.Error
-            });
-            return result;
+            var serviceResult = new ServiceResult();
+            serviceResult.NotFound("article");
+            return serviceResult;
         }
 
         foreach (var article in articles)
@@ -126,14 +111,13 @@ public class OrderLineService : IOrderLineService
         }
 
         var numberOfObjectsUpdated = await _context.SaveChangesAsync();
-        var serviceSuccesResult = new ServiceResult();
-        serviceSuccesResult.Messages.Add(new ServiceMessage()
+        if (numberOfObjectsUpdated is 0)
         {
-            Code = "Success",
-            Message = $"The {numberOfObjectsUpdated} orderlines were successfully updated.",
-            Type = ServiceMessageType.Info
-        });
-        return serviceSuccesResult;
+            var serviceResult = new ServiceResult();
+            serviceResult.NoChanges();
+            return serviceResult;
+        }
+        return new ServiceResult();
     }
 
     /// <summary>
@@ -150,7 +134,7 @@ public class OrderLineService : IOrderLineService
 
         if (orderLine == null)
         {
-            var serviceResult = new ServiceResult<bool>();
+            var serviceResult = new ServiceResult();
             serviceResult.DataIsNull();
             return serviceResult;
         }
@@ -158,24 +142,14 @@ public class OrderLineService : IOrderLineService
         if (returnedAt == DateTime.MinValue)
         {
             var serviceResult = new ServiceResult<bool>();
-            serviceResult.Messages.Add(new ServiceMessage()
-            {
-                Code = "False Date",
-                Message = "You need to give an actual date at which the article was returned.",
-                Type = ServiceMessageType.Error
-            });
+            serviceResult.WrongDate();
             return serviceResult;
         }
 
         if (orderLine.ReturnedAt.HasValue)
         {
-            var serviceResult = new ServiceResult<bool>();
-            serviceResult.Messages.Add(new ServiceMessage()
-            {
-                Code = "Already returned",
-                Message = "This article was already returned.",
-                Type = ServiceMessageType.Error
-            });
+            var serviceResult = new ServiceResult();
+            serviceResult.ArticleAlreadyReturned();
             return serviceResult;
         }
 
@@ -183,13 +157,8 @@ public class OrderLineService : IOrderLineService
 
         await _context.SaveChangesAsync();
 
-        var serviceSuccessResult = new ServiceResult<bool>(true);
-        serviceSuccessResult.Messages.Add(new ServiceMessage()
-        {
-            Code = "Returned",
-            Message = "The article was successfully returned.",
-            Type = ServiceMessageType.Info
-        });
+        var serviceSuccessResult = new ServiceResult();
+        serviceSuccessResult.SuccesfullyReturned("article");
         return serviceSuccessResult;
 
     }
