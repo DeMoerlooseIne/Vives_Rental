@@ -81,7 +81,7 @@ public class ProductServiceTests
         var result = await productService.RemoveAsync(product.Id);
 
         //Assert
-        Assert.Equals(true, result);
+        Assert.IsTrue(result.IsSuccess);
     }
 
     [TestMethod]
@@ -103,7 +103,7 @@ public class ProductServiceTests
         var result = await productService.RemoveAsync(productToAdd.Id);
 
         //Assert
-        Assert.Equals(true, result);
+        Assert.IsTrue(result.IsSuccess);
     }
 
     [TestMethod]
@@ -131,7 +131,7 @@ public class ProductServiceTests
         var result = await productService.RemoveAsync(product.Id);
 
         //Assert
-        Assert.Equals(true, result);
+        Assert.IsTrue(result.IsSuccess);
     }
 
     [TestMethod]

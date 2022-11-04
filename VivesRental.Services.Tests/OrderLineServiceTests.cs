@@ -29,7 +29,7 @@ public class OrderLineServiceTests
         var result = await orderLineService.RentAsync(order.Id, article.Id);
 
         //Assert
-        Assert.Equals(true, result);
+        Assert.IsTrue(result.IsSuccess);
     }
 
     [TestMethod]
@@ -53,7 +53,7 @@ public class OrderLineServiceTests
         var result = await orderLineService.RentAsync(order.Id, Guid.NewGuid());
 
         //Assert
-        Assert.Equals(false, result);
+        Assert.IsTrue(result.IsSuccess);
     }
 
     [TestMethod]
@@ -80,7 +80,7 @@ public class OrderLineServiceTests
         var result = await orderLineService.RentAsync(order.Id, idList);
 
         //Assert
-        Assert.Equals(true, result);
+        Assert.IsTrue(result.IsSuccess);
     }
 
     [TestMethod]
@@ -107,7 +107,7 @@ public class OrderLineServiceTests
         var result = await orderLineService.RentAsync(order.Id, idList);
 
         //Assert
-        Assert.Equals(false, result);
+        Assert.IsFalse(result.IsSuccess);
     }
 
     [TestMethod]
@@ -136,7 +136,7 @@ public class OrderLineServiceTests
         var result = await orderLineService.RentAsync(order.Id, idList);
 
         //Assert
-        Assert.Equals(true, result);
+        Assert.IsTrue(result.IsSuccess);
     }
 
     [TestMethod]
@@ -165,6 +165,6 @@ public class OrderLineServiceTests
         var result = await orderLineService.RentAsync(order.Id, idList);
 
         //Assert
-        Assert.Equals(false, result);
+        Assert.IsFalse(result.IsSuccess);
     }
 }
