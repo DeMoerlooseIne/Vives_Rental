@@ -53,7 +53,7 @@ public class OrderLineServiceTests
         var result = await orderLineService.RentAsync(order.Id, Guid.NewGuid());
 
         //Assert
-        Assert.IsTrue(result.IsSuccess);
+        Assert.IsFalse(result.IsSuccess);
     }
 
     [TestMethod]

@@ -45,9 +45,9 @@ public class ProductService : IProductService
             .MapToResults(filter)
             .ToListAsync();
 
-        var serviceResult = new ServiceResult<List<ProductResult?>>();
+        var serviceResult = new ServiceResult<List<ProductResult>>(productDetails);
 
-        if (serviceResult.Data == null)
+        if (serviceResult.Data is null)
         {
             serviceResult.DataIsNull();
         }
