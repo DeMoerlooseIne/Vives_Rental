@@ -1,4 +1,5 @@
 ﻿using Vives.Services.Model;
+using Vives.Services.Model.Extensions;
 using VivesRental.Model;
 
 namespace VivesRental.Services.Extensions;
@@ -42,23 +43,13 @@ public static class ValidationExtensions
 
         if (article == null)
         {
-            validMessage.Messages.Add(new ServiceMessage
-            {
-                Code = "DataIsNull",
-                Message = "The article is null.",
-                Type = ServiceMessageType.Error
-            });
+            validMessage.DataIsNull("article");
         }
         else
         {
             if (article.ProductId == Guid.Empty)
             {
-                validMessage.Messages.Add(new ServiceMessage
-                {
-                    Code = "InvalidId",
-                    Message = "The productid of the article is invalid.",
-                    Type = ServiceMessageType.Error
-                });
+                validMessage.InvalidId("productid");
             }
         }
         return validMessage;
@@ -70,54 +61,28 @@ public static class ValidationExtensions
 
         if (order.CustomerId == Guid.Empty)
         {
-            validMessage.Messages.Add(new ServiceMessage
-            {
-                Code = "InvalidId",
-                Message = "The customerid is invalid or empty.",
-                Type = ServiceMessageType.Error
-            });
+            validMessage.InvalidId("customerid");
         }
 
         if (string.IsNullOrWhiteSpace(order.CustomerFirstName))
         {
-            validMessage.Messages.Add(new ServiceMessage
-            {
-                Code = "FirstNameNull",
-                Message = "Firstname is null or empty.",
-                Type = ServiceMessageType.Error
-            });
+            validMessage.DataIsNull("customer's firstname");
         }
 
         if (string.IsNullOrWhiteSpace(order.CustomerLastName))
         {
-            validMessage.Messages.Add(new ServiceMessage
-            {
-                Code = "LastNameNull",
-                Message = "Firstname is null or empty.",
-                Type = ServiceMessageType.Error
-            });
+            validMessage.DataIsNull("customer's lastname");
         }
 
         if (string.IsNullOrWhiteSpace(order.CustomerEmail))
         {
-            validMessage.Messages.Add(new ServiceMessage
-            {
-                Code = "EmailNull",
-                Message = "Email is null or empty.",
-                Type = ServiceMessageType.Error
-            });
+            validMessage.DataIsNull("customer's email");
         }
 
         if (order.CreatedAt == DateTime.MinValue)
         {
-            validMessage.Messages.Add(new ServiceMessage
-            {
-                Code = "InvalidDate",
-                Message = "Date is invalid.",
-                Type = ServiceMessageType.Error
-            });
+            validMessage.InvalidDate();
         }
-    
         return validMessage;
     }
 
@@ -127,52 +92,27 @@ public static class ValidationExtensions
 
         if (orderLine.OrderId == Guid.Empty)
         {
-            validMessage.Messages.Add(new ServiceMessage
-            {
-                Code = "InvalidId",
-                Message = "Orderid is invalid or empty.",
-                Type = ServiceMessageType.Error
-            });
+            validMessage.InvalidId("orderid");
         }
 
         if (orderLine.ArticleId == Guid.Empty)
         {
-            validMessage.Messages.Add(new ServiceMessage
-            {
-                Code = "InvalidId",
-                Message = "Articleid is invalid or empty.",
-                Type = ServiceMessageType.Error
-            });
+            validMessage.InvalidId("articleid");
         }
 
         if (string.IsNullOrWhiteSpace(orderLine.ProductName))
         {
-            validMessage.Messages.Add(new ServiceMessage
-            {
-                Code = "ProductNameNull",
-                Message = "Productname is null or empty.",
-                Type = ServiceMessageType.Error
-            });
+            validMessage.DataIsNull("productname");
         }
 
         if (orderLine.RentedAt == DateTime.MinValue)
         {
-            validMessage.Messages.Add(new ServiceMessage
-            {
-                Code = "InvalidDate",
-                Message = "Date is invalid.",
-                Type = ServiceMessageType.Error
-            });
+            validMessage.InvalidDate();
         }
 
         if (orderLine.ExpiresAt == DateTime.MinValue)
         {
-            validMessage.Messages.Add(new ServiceMessage
-            {
-                Code = "InvalidDate",
-                Message = "Date is invalid.",
-                Type = ServiceMessageType.Error
-            });
+            validMessage.InvalidDate();
         }
         return validMessage;
     }
@@ -183,32 +123,17 @@ public static class ValidationExtensions
 
         if (string.IsNullOrWhiteSpace(customer.FirstName))
         {
-            validMessage.Messages.Add(new ServiceMessage
-            {
-                Code = "FirstNameNull",
-                Message = "Firstname is null or empty.",
-                Type = ServiceMessageType.Error
-            });
+            validMessage.DataIsNull("customer's firstname");
         }
 
         if (string.IsNullOrWhiteSpace(customer.LastName))
         {
-            validMessage.Messages.Add(new ServiceMessage
-            {
-                Code = "LastNameNull",
-                Message = "Lastname is null or empty.",
-                Type = ServiceMessageType.Error
-            });
+            validMessage.DataIsNull("customer's lastname");
         }
 
         if (string.IsNullOrWhiteSpace(customer.Email))
         {
-            validMessage.Messages.Add(new ServiceMessage
-            {
-                Code = "EmailNull",
-                Message = "Email is null or empty.",
-                Type = ServiceMessageType.Error
-            });
+            validMessage.DataIsNull("customer's email");
         }
         return validMessage;
     }
@@ -219,32 +144,18 @@ public static class ValidationExtensions
 
         if (articleReservation.ArticleId == Guid.Empty)
         {
-            validMessage.Messages.Add(new ServiceMessage
-            {
-                Code = "InvalidId",
-                Message = "Articleid is invalid or empty.",
-                Type = ServiceMessageType.Error
-            });
+            validMessage.InvalidId("articleid");
         }
 
         if (articleReservation.CustomerId == Guid.Empty)
-            validMessage.Messages.Add(new ServiceMessage
-            {
-                Code = "InvalidId",
-                Message = "Customerid is invalid or empty.",
-                Type = ServiceMessageType.Error
-            });
-   
+        {
+            validMessage.InvalidId("customerid");
+        }
 
         //Do not allow an Until date before From date
         if (articleReservation.UntilDateTime < articleReservation.FromDateTime)
         {
-            validMessage.Messages.Add(new ServiceMessage
-            {
-                Code = "InvalidDate",
-                Message = "Date is invalid.",
-                Type = ServiceMessageType.Error
-            });
+            validMessage.InvalidDate();
         }
         return validMessage;
     }

@@ -115,14 +115,14 @@ public class OrderLineService : IOrderLineService
         if (orderLine == null)
         {
             var serviceResult = new ServiceResult();
-            serviceResult.DataIsNull();
+            serviceResult.DataIsNull("orderline");
             return serviceResult;
         }
 
         if (returnedAt == DateTime.MinValue)
         {
             var serviceResult = new ServiceResult();
-            serviceResult.WrongDate();
+            serviceResult.InvalidDate();
             return serviceResult;
         }
 

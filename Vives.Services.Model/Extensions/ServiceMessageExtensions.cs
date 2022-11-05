@@ -38,6 +38,30 @@
             return serviceResult;
         }
 
+        public static T DataIsNull<T>(this T serviceResult, string entityName)
+            where T : ServiceResult
+        {
+            serviceResult.Messages.Add(new ServiceMessage
+            {
+                Code = "DataIsNull",
+                Message = $"The {entityName} is null.",
+                Type = ServiceMessageType.Error
+            });
+            return serviceResult;
+        }
+
+        public static T InvalidId<T>(this T serviceResult, string entityName)
+            where T : ServiceResult
+        {
+            serviceResult.Messages.Add(new ServiceMessage
+            {
+                Code = "InvalidId",
+                Message = $"The {entityName} of the article is invalid.",
+                Type = ServiceMessageType.Error
+            });
+            return serviceResult;
+        }
+
         public static T SuccesfullyAdded<T>(this T serviceResult, string entityName)
             where T : ServiceResult
         {
@@ -73,36 +97,12 @@
             return serviceResult;
         }
 
-        public static T WrongId<T>(this T serviceResult)
+        public static T InvalidDate<T>(this T serviceResult)
             where T : ServiceResult
         {
             serviceResult.Messages.Add(new ServiceMessage()
             {
-                Code = "WrongId",
-                Message = "Please give a correct id.",
-                Type = ServiceMessageType.Error
-            });
-            return serviceResult;
-        }
-
-        public static T DataIsNull<T>(this T serviceResult)
-            where T : ServiceResult
-        {
-            serviceResult.Messages.Add(new ServiceMessage()
-            {
-                Code = "NullData",
-                Message = "Data is null.",
-                Type = ServiceMessageType.Error
-            });
-            return serviceResult;
-        }
-
-        public static T WrongDate<T>(this T serviceResult)
-            where T : ServiceResult
-        {
-            serviceResult.Messages.Add(new ServiceMessage()
-            {
-                Code = "WrongDate",
+                Code = "InvalidDate",
                 Message = "Please give a correct date.",
                 Type = ServiceMessageType.Error
             });
