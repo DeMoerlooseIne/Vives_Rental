@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Vives.Services.Model;
+using Vives.Services.Model.Extensions;
 using VivesRental.Model;
 using VivesRental.Repository.Core;
 using VivesRental.Services.Abstractions;
@@ -49,6 +50,11 @@ public class ProductService : IProductService
             RentalExpiresAfterDays = entity.RentalExpiresAfterDays
         };
 
+        if (product == null)
+        {
+            return new ServiceResult<ProductResult>().DataIsNull("product");
+        }
+
         var validationResult = ValidationExtensions.IsValid(product);
 
         if (validationResult.IsSuccess)
@@ -70,7 +76,12 @@ public class ProductService : IProductService
     {
         var product = await _context.Products
             .FirstOrDefaultAsync(p => p.Id == id);
-            
+
+        if (product == null)
+        {
+            return new ServiceResult<ProductResult>().DataIsNull("product");
+        }
+
         product.Name = entity.Name;
         product.Description = entity.Description;
         product.Manufacturer = entity.Manufacturer;

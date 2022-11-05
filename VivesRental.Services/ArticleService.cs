@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Vives.Services.Model;
+using Vives.Services.Model.Extensions;
 using VivesRental.Enums;
 using VivesRental.Model;
 using VivesRental.Repository.Core;
@@ -40,7 +41,6 @@ public class ArticleService : IArticleService
         return articleDetails;
     }
 
-
     public async Task<ServiceResult<ArticleResult>> CreateAsync(ArticleRequest entity)
     {
         var article = new Article
@@ -48,6 +48,11 @@ public class ArticleService : IArticleService
             ProductId = entity.ProductId,
             Status = entity.Status
         };
+
+        if (article == null)
+        {
+            return new ServiceResult<ArticleResult>().DataIsNull("article");
+        }
 
         var validationResult = ValidationExtensions.IsValid(article);
 
@@ -72,6 +77,11 @@ public class ArticleService : IArticleService
         var article = await _context.Articles
             .Where(a => a.Id == articleId)
             .FirstOrDefaultAsync();
+
+        if (article == null)
+        {
+            return new ServiceResult<ArticleResult>().DataIsNull("article");
+        }
 
         var validationResult = ValidationExtensions.IsValid(article);
 

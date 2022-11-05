@@ -41,17 +41,11 @@ public static class ValidationExtensions
     {
         ValidationResult validMessage = new();
 
-        if (article == null)
+        if (article.ProductId == Guid.Empty)
         {
-            validMessage.DataIsNull("article");
+            validMessage.InvalidId("productid");
         }
-        else
-        {
-            if (article.ProductId == Guid.Empty)
-            {
-                validMessage.InvalidId("productid");
-            }
-        }
+        
         return validMessage;
     }
 

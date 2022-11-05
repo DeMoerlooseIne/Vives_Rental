@@ -51,6 +51,11 @@ public class CustomerService : ICustomerService
             PhoneNumber = entity.PhoneNumber
         };
 
+        if (customer == null)
+        {
+            return new ServiceResult<CustomerResult>().DataIsNull("customer");
+        }
+
         var validationResult = ValidationExtensions.IsValid(customer);
 
         if (validationResult.IsSuccess)
@@ -74,6 +79,11 @@ public class CustomerService : ICustomerService
         //Get Product from unitOfWork
         var customer = await _context.Customers
             .FirstOrDefaultAsync(c => c.Id == id);
+
+        if (customer == null)
+        {
+            return new ServiceResult<CustomerResult>().DataIsNull("customer");
+        }
 
         //Only update the properties we want to update
         customer.FirstName = entity.FirstName;

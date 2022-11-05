@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Vives.Services.Model;
+using Vives.Services.Model.Extensions;
 using VivesRental.Model;
 using VivesRental.Repository.Core;
 using VivesRental.Services.Abstractions;
@@ -49,6 +50,11 @@ public class ArticleReservationService : IArticleReservationService
             FromDateTime = request.FromDateTime.Value,
             UntilDateTime = request.UntilDateTime.Value
         };
+
+        if (articleReservation == null)
+        {
+            return new ServiceResult<ArticleReservationResult>().DataIsNull("articlereservation");
+        }
 
         var validationResult = ValidationExtensions.IsValid(articleReservation);
 

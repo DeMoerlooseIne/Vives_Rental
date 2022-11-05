@@ -44,6 +44,10 @@ public class OrderService : IOrderService
             .Where(c => c.Id == customerId)
             .FirstOrDefaultAsync();
 
+        if (customer == null)
+        {
+            return new ServiceResult<OrderResult>().DataIsNull("order");
+        }
 
         var order = new Order
         {
