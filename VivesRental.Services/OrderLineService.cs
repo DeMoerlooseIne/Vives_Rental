@@ -19,36 +19,22 @@ public class OrderLineService : IOrderLineService
         _context = context;
     }
 
-    public async Task<ServiceResult<OrderLineResult?>> GetAsync(Guid id)
+    public async Task<OrderLineResult?> GetAsync(Guid id)
     {
         var orderLineDetails = await _context.OrderLines
             .Where(ol => ol.Id == id)
             .MapToResults()
             .FirstOrDefaultAsync();
-
-        var serviceResult = new ServiceResult<OrderLineResult?>(orderLineDetails);
-
-        if (serviceResult.Data == null)
-        {
-            serviceResult.DataIsNull();
-        }
-        return serviceResult;
+        return orderLineDetails;
     }
 
-    public async Task<ServiceResult<List<OrderLineResult>>> FindAsync(OrderLineFilter? filter = null)
+    public async Task<List<OrderLineResult>> FindAsync(OrderLineFilter? filter = null)
     {
         var orderLineDetails = await _context.OrderLines
             .ApplyFilter(filter)
             .MapToResults()
             .ToListAsync();
-
-        var serviceResult = new ServiceResult<List<OrderLineResult>>(orderLineDetails);
-        
-        if (serviceResult.Data == null)
-        {
-            serviceResult.DataIsNull();
-        }
-        return serviceResult;
+        return orderLineDetails;
     }
 
     public async Task<ServiceResult> RentAsync(Guid orderId, Guid articleId)
@@ -80,7 +66,6 @@ public class OrderLineService : IOrderLineService
         var successResult = new ServiceResult();
         successResult.SuccesfullyAdded("orderline");
         return successResult;
-
     }
 
     public async Task<ServiceResult> RentAsync(Guid orderId, IList<Guid> articleIds)
@@ -120,12 +105,7 @@ public class OrderLineService : IOrderLineService
         return new ServiceResult();
     }
 
-    /// <summary>
     /// Returns a rented article
-    /// </summary>
-    /// <param name="orderLineId"></param>
-    /// <param name="returnedAt"></param>
-    /// <returns></returns>
     public async Task<ServiceResult> ReturnAsync(Guid orderLineId, DateTime returnedAt)
     {
         var orderLine = await _context.OrderLines
@@ -141,7 +121,7 @@ public class OrderLineService : IOrderLineService
 
         if (returnedAt == DateTime.MinValue)
         {
-            var serviceResult = new ServiceResult<bool>();
+            var serviceResult = new ServiceResult();
             serviceResult.WrongDate();
             return serviceResult;
         }

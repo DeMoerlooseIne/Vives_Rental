@@ -1,7 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Vives.Services.Model;
-using Vives.Services.Model.Extensions;
 using VivesRental.Enums;
 using VivesRental.Model;
 using VivesRental.Repository.Core;
@@ -23,40 +22,26 @@ public class ArticleService : IArticleService
         _context = context;
     }
 
-    public async Task<ServiceResult<ArticleResult?>> GetAsync(Guid id)
+    public async Task<ArticleResult?> GetAsync(Guid id)
     {
         var articleDetails = await _context.Articles
             .Where(a => a.Id == id)
             .MapToResults()
             .FirstOrDefaultAsync();
-
-        var serviceResult = new ServiceResult<ArticleResult?>(articleDetails);
-
-        if (serviceResult.Data == null)
-        {
-            serviceResult.DataIsNull();
-        }
-        return serviceResult;
+        return articleDetails;
     }
         
-    public async Task<ServiceResult<List<ArticleResult>>> FindAsync(ArticleFilter? filter = null)
+    public async Task<List<ArticleResult>> FindAsync(ArticleFilter? filter = null)
     {
         var articleDetails = await _context.Articles
             .ApplyFilter(filter)
             .MapToResults()
             .ToListAsync();
-
-        var serviceResult = new ServiceResult<List<ArticleResult>>(articleDetails);
-
-        if (serviceResult.Data == null)
-        {
-            serviceResult.DataIsNull();
-        }
-        return serviceResult;
+        return articleDetails;
     }
-        
-        
-    public async Task<ServiceResult<ArticleResult?>> CreateAsync(ArticleRequest entity)
+
+
+    public async Task<ServiceResult<ArticleResult>> CreateAsync(ArticleRequest entity)
     {
         var article = new Article
         {
@@ -64,18 +49,21 @@ public class ArticleService : IArticleService
             Status = entity.Status
         };
 
-        _context.Articles.Add(article);
+        var validationResult = ValidationExtensions.IsValid(article);
 
-        await _context.SaveChangesAsync();
-
-        var articleResult = await GetAsync(article.Id);
-        if (articleResult is null)
+        if (validationResult.IsSuccess)
         {
-            var serviceResult = new ServiceResult<ArticleResult?>();
-            serviceResult.NotFound("article");
-            return serviceResult;
+            _context.Articles.Add(article);
+            await _context.SaveChangesAsync();
+            return new ServiceResult<ArticleResult>(await GetAsync(article.Id));
         }
-        return articleResult;
+        else
+        {
+            return new ServiceResult<ArticleResult>
+            {
+                Messages = validationResult.Messages
+            };
+        }
     }
 
     public async Task<ServiceResult> UpdateStatusAsync(Guid articleId, ArticleStatus status)
@@ -85,25 +73,23 @@ public class ArticleService : IArticleService
             .Where(a => a.Id == articleId)
             .FirstOrDefaultAsync();
 
-        if (article == null)
+        var validationResult = ValidationExtensions.IsValid(article);
+
+        if (validationResult.IsSuccess)
         {
-            var serviceResult = new ServiceResult();
-            serviceResult.NotFound("article");
-            return serviceResult;
+            //Only update the properties we want to update
+            article.Status = status;
+
+            await _context.SaveChangesAsync();
+            return new ServiceResult<ArticleResult>(await GetAsync(article.Id));
         }
-
-        //Only update the properties we want to update
-        article.Status = status;
-
-        await _context.SaveChangesAsync();
-        var serviceSuccessResult = new ServiceResult();
-        serviceSuccessResult.Messages.Add(new ServiceMessage()
+        else
         {
-            Code = "Updated",
-            Message = "The article status was successfully updated.",
-            Type = ServiceMessageType.Info
-        });
-        return serviceSuccessResult;
+            return new ServiceResult<ArticleResult>
+            {
+                Messages = validationResult.Messages
+            };
+        }
     }
 
     /// <summary>

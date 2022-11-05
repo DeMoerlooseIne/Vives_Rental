@@ -45,7 +45,7 @@
             {
                 Code = "SuccesfullyAdded",
                 Message = $"The {entityName} was succesfully added.",
-                Type = ServiceMessageType.Error
+                Type = ServiceMessageType.Info
             });
             return serviceResult;
         }
@@ -57,7 +57,7 @@
             {
                 Code = "SuccesfullyDeleted",
                 Message = $"The {entityName} was succesfully deleted.",
-                Type = ServiceMessageType.Error
+                Type = ServiceMessageType.Info
             });
             return serviceResult;
         }
@@ -68,7 +68,7 @@
             {
                 Code = "SuccesfullyReturned",
                 Message = $"The {entityName} was succesfully returned.",
-                Type = ServiceMessageType.Error
+                Type = ServiceMessageType.Info
             });
             return serviceResult;
         }

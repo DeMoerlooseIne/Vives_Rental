@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Vives.Services.Model;
-using Vives.Services.Model.Extensions;
 using VivesRental.Model;
 using VivesRental.Repository.Core;
 using VivesRental.Services.Abstractions;
@@ -20,39 +19,25 @@ public class ArticleReservationService : IArticleReservationService
     {
         _context = context;
     }
-    public async Task<ServiceResult<ArticleReservationResult?>> GetAsync(Guid id)
+    public async Task<ArticleReservationResult?> GetAsync(Guid id)
     {
         var articleReservationDetails = await _context.ArticleReservations
             .Where(ar => ar.Id == id)
             .MapToResults()
             .FirstOrDefaultAsync();
-
-        var serviceResult = new ServiceResult<ArticleReservationResult?>(articleReservationDetails);
-
-        if (serviceResult.Data == null)
-        {
-            serviceResult.DataIsNull();
-        }
-        return serviceResult;
+        return articleReservationDetails;
     }
         
-    public async Task<ServiceResult<List<ArticleReservationResult>>> FindAsync(ArticleReservationFilter? filter = null)
+    public async Task<List<ArticleReservationResult>> FindAsync(ArticleReservationFilter? filter = null)
     {
         var articleReservationDetails = await _context.ArticleReservations
             .ApplyFilter(filter)
             .MapToResults()
             .ToListAsync();
-
-        var serviceResult = new ServiceResult<List<ArticleReservationResult>>(articleReservationDetails);
-
-        if (serviceResult.Data == null)
-        {
-            serviceResult.DataIsNull();
-        }
-        return serviceResult;
+        return articleReservationDetails;
     }
         
-    public async Task<ServiceResult<ArticleReservationResult?>> CreateAsync(ArticleReservationRequest request)
+    public async Task<ServiceResult<ArticleReservationResult>> CreateAsync(ArticleReservationRequest request)
     {
         request.FromDateTime ??= DateTime.Now;
         request.UntilDateTime ??= DateTime.Now.AddMinutes(5);
@@ -65,12 +50,23 @@ public class ArticleReservationService : IArticleReservationService
             UntilDateTime = request.UntilDateTime.Value
         };
 
-        _context.ArticleReservations.Add(articleReservation);
+        var validationResult = ValidationExtensions.IsValid(articleReservation);
 
-        await _context.SaveChangesAsync();
-
-        return await GetAsync(articleReservation.Id);
+        if (validationResult.IsSuccess)
+        {
+            _context.ArticleReservations.Add(articleReservation);
+            await _context.SaveChangesAsync();
+            return new ServiceResult<ArticleReservationResult>(await GetAsync(articleReservation.Id));
+        }
+        else
+        {
+            return new ServiceResult<ArticleReservationResult>
+            {
+                Messages = validationResult.Messages
+            };
+        }
     }
+
 
     /// <summary>
     /// Removes one ArticleReservation

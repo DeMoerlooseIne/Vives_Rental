@@ -7,8 +7,8 @@ namespace VivesRental.Services.Abstractions;
 
 public interface IArticleReservationService
 {
-    Task<ServiceResult<ArticleReservationResult?>> GetAsync(Guid id);
-    Task<ServiceResult<List<ArticleReservationResult>>> FindAsync(ArticleReservationFilter? filter = null);
-    Task<ServiceResult<ArticleReservationResult?>> CreateAsync(ArticleReservationRequest entity);
+    Task<ArticleReservationResult?> GetAsync(Guid id);
+    Task<List<ArticleReservationResult>> FindAsync(ArticleReservationFilter? filter = null);
+    Task<ServiceResult<ArticleReservationResult>> CreateAsync(ArticleReservationRequest entity);
     Task<ServiceResult> RemoveAsync(Guid id);
 }

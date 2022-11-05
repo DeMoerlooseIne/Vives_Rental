@@ -6,8 +6,8 @@ namespace VivesRental.Services.Abstractions;
 
 public interface IOrderService
 {
-    Task<ServiceResult<OrderResult?>> GetAsync(Guid id);
-    Task<ServiceResult<List<OrderResult>>> FindAsync(OrderFilter? filter);
-    Task<ServiceResult<OrderResult?>> CreateAsync(Guid customerId);
+    Task<OrderResult?> GetAsync(Guid id);
+    Task<List<OrderResult>> FindAsync(OrderFilter? filter);
+    Task<ServiceResult<OrderResult>> CreateAsync(Guid customerId);
     Task<ServiceResult> ReturnAsync(Guid id, DateTime returnedAt);
 }

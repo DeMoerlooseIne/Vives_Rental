@@ -20,48 +20,30 @@ public class OrderService : IOrderService
         _context = context;
     }
 
-    public async Task<ServiceResult<OrderResult?>> GetAsync(Guid id)
+    public async Task<OrderResult?> GetAsync(Guid id)
     {
         var orderDetails = await _context.Orders
             .Where(o => o.Id == id)
             .MapToResults()
             .FirstOrDefaultAsync();
-
-        var serviceResult = new ServiceResult<OrderResult?>(orderDetails);
-        if (serviceResult.Data == null)
-        {
-            serviceResult.DataIsNull();
-        }
-        return serviceResult;
+        return orderDetails;
     }
 
-    public async Task<ServiceResult<List<OrderResult>>> FindAsync(OrderFilter? filter = null)
+    public async Task<List<OrderResult>> FindAsync(OrderFilter? filter = null)
     {
         var orderDetails = await _context.Orders
             .ApplyFilter(filter)
             .MapToResults()
             .ToListAsync();
-
-        var serviceResult = new ServiceResult<List<OrderResult>>(orderDetails);
-        if (serviceResult.Data == null)
-        {
-            serviceResult.DataIsNull();
-        }
-        return serviceResult;
+        return orderDetails;
     }
         
-    public async Task<ServiceResult<OrderResult?>> CreateAsync(Guid customerId)
+    public async Task<ServiceResult<OrderResult>> CreateAsync(Guid customerId)
     {
         var customer = await _context.Customers
             .Where(c => c.Id == customerId)
             .FirstOrDefaultAsync();
 
-        if (customer == null)
-        {
-            var serviceResult = new ServiceResult<OrderResult?>();
-            serviceResult.DataIsNull();
-            return serviceResult;
-        }
 
         var order = new Order
         {
@@ -73,17 +55,22 @@ public class OrderService : IOrderService
             CreatedAt = DateTime.Now
         };
 
-        _context.Orders.Add(order);
-        var numberOfObjectsUpdated = await _context.SaveChangesAsync();
-        if (numberOfObjectsUpdated > 0)
-        {
-            var serviceResult = await GetAsync(order.Id);
-            return serviceResult;
-        }
+        var validationResult = ValidationExtensions.IsValid(order);
 
-        var failedResult = new ServiceResult<OrderResult?>(null);
-        failedResult.ErrorNoChanges();
-        return failedResult;
+        if (validationResult.IsSuccess)
+        {
+            _context.Orders.Add(order);
+            await _context.SaveChangesAsync();
+            var orderResult = new ServiceResult<OrderResult>(await GetAsync(order.Id));
+            return orderResult;
+        }
+        else
+        {
+            return new ServiceResult<OrderResult>
+            {
+                Messages = validationResult.Messages
+            };
+        }
     }
 
     public async Task<ServiceResult> ReturnAsync(Guid orderId, DateTime returnedAt)

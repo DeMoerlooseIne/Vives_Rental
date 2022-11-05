@@ -1,174 +1,251 @@
-﻿using VivesRental.Model;
+﻿using Vives.Services.Model;
+using VivesRental.Model;
 
 namespace VivesRental.Services.Extensions;
 public static class ValidationExtensions
-{
-    public class ValidationMessage
+{ 
+    public class ValidationResult : ServiceResult
     {
-        public bool IsValid { get; set; }
-        public string? ErrorMessage { get; set; }
     }
 
-    public static ValidationMessage IsValid(this Product product)
+    public static ValidationResult IsValid(this Product product)
     {
-        ValidationMessage validationMessage = new ValidationMessage() { IsValid = true };
+        ValidationResult validMessage = new();
 
-        if (string.IsNullOrWhiteSpace(product.Name))
+        if (product == null)
         {
-            validationMessage.ErrorMessage = $"Please enter a name. {product.Name} is invalid.";
-            validationMessage.IsValid = false;
-            return validationMessage;
+            validMessage.Messages.Add(new ServiceMessage
+            {
+                Code = "DataIsNull",
+                Message = "The product is null.",
+                Type = ServiceMessageType.Error
+            });
         }
-        return validationMessage;
-    }
-
-    public static ValidationMessage IsValid(this Article article)
-    {
-        ValidationMessage validationMessage = new ValidationMessage() { IsValid = true };
-
-        if (article.ProductId == Guid.Empty)
+        else
         {
-            validationMessage.ErrorMessage = $"Please fill in a productid. {article.ProductId} is invalid.";
-            validationMessage.IsValid = false;
-            return validationMessage;
+            if (string.IsNullOrWhiteSpace(product.Name))
+            {
+                validMessage.Messages.Add(new ServiceMessage
+                {
+                    Code = "NameIsNull",
+                    Message = "The product name is missing or just whitespace.",
+                    Type = ServiceMessageType.Error
+                });
+            }
         }
-        return validationMessage;
+        return validMessage;
     }
 
-    public static ValidationMessage IsValid(this Order order)
+    public static ValidationResult IsValid(this Article article)
     {
-        ValidationMessage validationMessage = new ValidationMessage() { IsValid = true };
+        ValidationResult validMessage = new();
+
+        if (article == null)
+        {
+            validMessage.Messages.Add(new ServiceMessage
+            {
+                Code = "DataIsNull",
+                Message = "The article is null.",
+                Type = ServiceMessageType.Error
+            });
+        }
+        else
+        {
+            if (article.ProductId == Guid.Empty)
+            {
+                validMessage.Messages.Add(new ServiceMessage
+                {
+                    Code = "InvalidId",
+                    Message = "The productid of the article is invalid.",
+                    Type = ServiceMessageType.Error
+                });
+            }
+        }
+        return validMessage;
+    }
+
+    public static ValidationResult IsValid(this Order order)
+    {
+        ValidationResult validMessage = new();
 
         if (order.CustomerId == Guid.Empty)
         {
-            validationMessage.ErrorMessage = "Please fill in a customerid. The customerid is invalid.";
-            validationMessage.IsValid = false;
-            return validationMessage;
+            validMessage.Messages.Add(new ServiceMessage
+            {
+                Code = "InvalidId",
+                Message = "The customerid is invalid or empty.",
+                Type = ServiceMessageType.Error
+            });
         }
 
         if (string.IsNullOrWhiteSpace(order.CustomerFirstName))
         {
-            validationMessage.ErrorMessage = "Please fill in a the firstname of the customer. The firstname is invalid.";
-            validationMessage.IsValid = false;
-            return validationMessage;
+            validMessage.Messages.Add(new ServiceMessage
+            {
+                Code = "FirstNameNull",
+                Message = "Firstname is null or empty.",
+                Type = ServiceMessageType.Error
+            });
         }
 
         if (string.IsNullOrWhiteSpace(order.CustomerLastName))
         {
-            validationMessage.ErrorMessage = "Please fill in a the lastname of the customer. The lastname is invalid.";
-            validationMessage.IsValid = false;
-            return validationMessage;
+            validMessage.Messages.Add(new ServiceMessage
+            {
+                Code = "LastNameNull",
+                Message = "Firstname is null or empty.",
+                Type = ServiceMessageType.Error
+            });
         }
 
         if (string.IsNullOrWhiteSpace(order.CustomerEmail))
         {
-            validationMessage.ErrorMessage = "Please fill in a customeremail. The customeremail is invalid.";
-            validationMessage.IsValid = false;
-            return validationMessage;
+            validMessage.Messages.Add(new ServiceMessage
+            {
+                Code = "EmailNull",
+                Message = "Email is null or empty.",
+                Type = ServiceMessageType.Error
+            });
         }
 
         if (order.CreatedAt == DateTime.MinValue)
         {
-            validationMessage.ErrorMessage = "Please fill in a correct date. The date is invalid.";
-            validationMessage.IsValid = false;
-            return validationMessage;
+            validMessage.Messages.Add(new ServiceMessage
+            {
+                Code = "InvalidDate",
+                Message = "Date is invalid.",
+                Type = ServiceMessageType.Error
+            });
         }
-        return validationMessage;
+    
+        return validMessage;
     }
 
-    public static ValidationMessage IsValid(this OrderLine orderLine)
+    public static ValidationResult IsValid(this OrderLine orderLine)
     {
-        ValidationMessage validationMessage = new ValidationMessage() { IsValid = true };
+        ValidationResult validMessage = new();
 
         if (orderLine.OrderId == Guid.Empty)
         {
-            validationMessage.ErrorMessage = "Please fill in the correct orderid. The orderid is invalid.";
-            validationMessage.IsValid = false;
-            return validationMessage;
+            validMessage.Messages.Add(new ServiceMessage
+            {
+                Code = "InvalidId",
+                Message = "Orderid is invalid or empty.",
+                Type = ServiceMessageType.Error
+            });
         }
 
         if (orderLine.ArticleId == Guid.Empty)
         {
-            validationMessage.ErrorMessage = "Please fill in the correct articleid. The articleid is invalid.";
-            validationMessage.IsValid = false;
-            return validationMessage;
+            validMessage.Messages.Add(new ServiceMessage
+            {
+                Code = "InvalidId",
+                Message = "Articleid is invalid or empty.",
+                Type = ServiceMessageType.Error
+            });
         }
 
         if (string.IsNullOrWhiteSpace(orderLine.ProductName))
         {
-            validationMessage.ErrorMessage = "Please fill in a correct productname. The productname is invalid.";
-            validationMessage.IsValid = false;
-            return validationMessage;
+            validMessage.Messages.Add(new ServiceMessage
+            {
+                Code = "ProductNameNull",
+                Message = "Productname is null or empty.",
+                Type = ServiceMessageType.Error
+            });
         }
 
         if (orderLine.RentedAt == DateTime.MinValue)
         {
-            validationMessage.ErrorMessage = "Please fill in a correct date. The date is invalid.";
-            validationMessage.IsValid = false;
-            return validationMessage;
+            validMessage.Messages.Add(new ServiceMessage
+            {
+                Code = "InvalidDate",
+                Message = "Date is invalid.",
+                Type = ServiceMessageType.Error
+            });
         }
 
         if (orderLine.ExpiresAt == DateTime.MinValue)
         {
-            validationMessage.ErrorMessage = "Please fill in a correct date. The date is invalid.";
-            validationMessage.IsValid = false;
-            return validationMessage;
+            validMessage.Messages.Add(new ServiceMessage
+            {
+                Code = "InvalidDate",
+                Message = "Date is invalid.",
+                Type = ServiceMessageType.Error
+            });
         }
-        return validationMessage;
+        return validMessage;
     }
 
-    public static ValidationMessage IsValid(this Customer customer)
+    public static ValidationResult IsValid(this Customer customer)
     {
-        ValidationMessage validationMessage = new ValidationMessage() { IsValid = true };
+        ValidationResult validMessage = new();
 
         if (string.IsNullOrWhiteSpace(customer.FirstName))
         {
-            validationMessage.ErrorMessage = "Please fill in a correct firstname. The firstname is invalid.";
-            validationMessage.IsValid = false;
-            return validationMessage;
+            validMessage.Messages.Add(new ServiceMessage
+            {
+                Code = "FirstNameNull",
+                Message = "Firstname is null or empty.",
+                Type = ServiceMessageType.Error
+            });
         }
 
         if (string.IsNullOrWhiteSpace(customer.LastName))
         {
-            validationMessage.ErrorMessage = "Please fill in a correct lastname. The lastname is invalid.";
-            validationMessage.IsValid = false;
-            return validationMessage;
+            validMessage.Messages.Add(new ServiceMessage
+            {
+                Code = "LastNameNull",
+                Message = "Lastname is null or empty.",
+                Type = ServiceMessageType.Error
+            });
         }
 
         if (string.IsNullOrWhiteSpace(customer.Email))
         {
-            validationMessage.ErrorMessage = "Please fill in a correct email. The customeremail is invalid.";
-            validationMessage.IsValid = false;
-            return validationMessage;
+            validMessage.Messages.Add(new ServiceMessage
+            {
+                Code = "EmailNull",
+                Message = "Email is null or empty.",
+                Type = ServiceMessageType.Error
+            });
         }
-        return validationMessage;
+        return validMessage;
     }
 
-    public static ValidationMessage IsValid(this ArticleReservation articleReservation)
+    public static ValidationResult IsValid(this ArticleReservation articleReservation)
     {
-        ValidationMessage validationMessage = new ValidationMessage() { IsValid = true };
+        ValidationResult validMessage = new();
 
         if (articleReservation.ArticleId == Guid.Empty)
         {
-            validationMessage.ErrorMessage = "Please fill in the correct articleid. The articleid is invalid.";
-            validationMessage.IsValid = false;
-            return validationMessage;
+            validMessage.Messages.Add(new ServiceMessage
+            {
+                Code = "InvalidId",
+                Message = "Articleid is invalid or empty.",
+                Type = ServiceMessageType.Error
+            });
         }
 
         if (articleReservation.CustomerId == Guid.Empty)
-        {
-            validationMessage.ErrorMessage = "Please fill in the correct customerid. The customerid is invalid.";
-            validationMessage.IsValid = false;
-            return validationMessage;
-        }
+            validMessage.Messages.Add(new ServiceMessage
+            {
+                Code = "InvalidId",
+                Message = "Customerid is invalid or empty.",
+                Type = ServiceMessageType.Error
+            });
+   
 
         //Do not allow an Until date before From date
         if (articleReservation.UntilDateTime < articleReservation.FromDateTime)
         {
-            validationMessage.ErrorMessage = "Please fill in a correct date. The date is invalid.";
-            validationMessage.IsValid = false;
-            return validationMessage;
+            validMessage.Messages.Add(new ServiceMessage
+            {
+                Code = "InvalidDate",
+                Message = "Date is invalid.",
+                Type = ServiceMessageType.Error
+            });
         }
-        return validationMessage;
+        return validMessage;
     }
 }

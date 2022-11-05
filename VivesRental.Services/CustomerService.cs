@@ -23,40 +23,25 @@ public class CustomerService : ICustomerService
     }
 
 
-    public async Task<ServiceResult<CustomerResult?>> GetAsync(Guid id)
+    public async Task<CustomerResult?> GetAsync(Guid id)
     {
         var customerDetails = await _context.Customers
             .Where(c => c.Id == id)
             .MapToResults()
             .FirstOrDefaultAsync();
-
-        var serviceResult = new ServiceResult<CustomerResult?>(customerDetails);
-
-        if (serviceResult.Data == null)
-        {
-            serviceResult.DataIsNull();
-        }            
-        return serviceResult;
-
+        return customerDetails;
     }
 
-    public async Task<ServiceResult<List<CustomerResult>>> FindAsync(CustomerFilter? filter = null)
+    public async Task<List<CustomerResult>> FindAsync(CustomerFilter? filter = null)
     {
         var customerDetails = await _context.Customers
             .ApplyFilter(filter)
             .MapToResults()
             .ToListAsync();
-
-        var serviceResult = new ServiceResult<List<CustomerResult>>(customerDetails);
-
-        if (serviceResult.Data == null)
-        {
-            serviceResult.DataIsNull();
-        }
-        return serviceResult;
+        return customerDetails;
     }
 
-    public async Task<ServiceResult<CustomerResult?>> CreateAsync(CustomerRequest entity)
+    public async Task<ServiceResult<CustomerResult>> CreateAsync(CustomerRequest entity)
     {
         var customer = new Customer
         {
@@ -66,32 +51,29 @@ public class CustomerService : ICustomerService
             PhoneNumber = entity.PhoneNumber
         };
 
-        _context.Customers.Add(customer);
-        await _context.SaveChangesAsync();
+        var validationResult = ValidationExtensions.IsValid(customer);
 
-        var customerResult = await GetAsync(customer.Id);
-        if (customerResult is null)
+        if (validationResult.IsSuccess)
         {
-            var serviceResult = new ServiceResult<CustomerResult?>();
-            serviceResult.NotFound("customer");
-            return serviceResult;
+            _context.Customers.Add(customer);
+            await _context.SaveChangesAsync();
+
+            return new ServiceResult<CustomerResult>(await GetAsync(customer.Id));
         }
-        var succesServiceResult = new ServiceResult<CustomerResult?>();
-        return succesServiceResult;
+        else
+        {
+            return new ServiceResult<CustomerResult>
+            {
+                Messages = validationResult.Messages
+            };
+        }
     }
 
-    public async Task<ServiceResult<CustomerResult?>> EditAsync(Guid id, CustomerRequest entity)
+        public async Task<ServiceResult<CustomerResult>> EditAsync(Guid id, CustomerRequest entity)
     {
         //Get Product from unitOfWork
         var customer = await _context.Customers
             .FirstOrDefaultAsync(c => c.Id == id);
-
-        if (customer == null)
-        {
-            var serviceResult = new ServiceResult<CustomerResult?>();
-            serviceResult.DataIsNull();
-            return serviceResult;
-        }
 
         //Only update the properties we want to update
         customer.FirstName = entity.FirstName;
@@ -99,9 +81,22 @@ public class CustomerService : ICustomerService
         customer.Email = entity.Email;
         customer.PhoneNumber = entity.PhoneNumber;
 
-        await _context.SaveChangesAsync();
+        var validationResult = ValidationExtensions.IsValid(customer);
 
-        return await GetAsync(customer.Id);
+        if (validationResult.IsSuccess)
+        {
+            _context.Customers.Add(customer);
+            await _context.SaveChangesAsync();
+
+            return new ServiceResult<CustomerResult>(await GetAsync(customer.Id));
+        }
+        else
+        {
+            return new ServiceResult<CustomerResult>
+            {
+                Messages = validationResult.Messages
+            };
+        }
     }
 
     /// <summary>

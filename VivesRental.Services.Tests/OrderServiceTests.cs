@@ -31,7 +31,7 @@ public class OrderServiceTests
 
         //Assert
         Assert.IsNotNull(result);
-        Assert.AreEqual(1, result.Data.NumberOfOrderLines);
+        Assert.AreEqual(1, result.NumberOfOrderLines);
     }
 
     [TestMethod]
@@ -67,6 +67,6 @@ public class OrderServiceTests
 
         //Assert
         Assert.IsNotNull(result);
-        Assert.AreEqual(3, result.Data.NumberOfOrderLines);
+        Assert.AreEqual(3, result.NumberOfOrderLines);
     }
 }

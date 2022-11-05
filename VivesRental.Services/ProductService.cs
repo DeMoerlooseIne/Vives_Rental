@@ -1,7 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Vives.Services.Model;
-using Vives.Services.Model.Extensions;
 using VivesRental.Model;
 using VivesRental.Repository.Core;
 using VivesRental.Services.Abstractions;
@@ -21,39 +20,25 @@ public class ProductService : IProductService
         _context = context;
     }
 
-    public async Task<ServiceResult<ProductResult?>> GetAsync(Guid id)
+    public async Task<ProductResult?> GetAsync(Guid id)
     {
         var productDetails = await _context.Products
             .Where(p => p.Id == id)
             .MapToResults()
             .FirstOrDefaultAsync();
-
-        var serviceResult = new ServiceResult<ProductResult?>(productDetails);
-
-        if (serviceResult.Data == null)
-        {
-            serviceResult.DataIsNull();
-        }
-        return serviceResult;
+        return productDetails;
     }
 
-    public async Task<ServiceResult<List<ProductResult>>> FindAsync(ProductFilter? filter = null)
+    public async Task<List<ProductResult>> FindAsync(ProductFilter? filter = null)
     { 
         var productDetails = await _context.Products
             .ApplyFilter(filter)
             .MapToResults(filter)
             .ToListAsync();
-
-        var serviceResult = new ServiceResult<List<ProductResult>>(productDetails);
-
-        if (serviceResult.Data == null)
-        {
-            serviceResult.DataIsNull();
-        }
-        return serviceResult;
+        return productDetails;
     }
 
-    public async Task<ServiceResult<ProductResult?>> CreateAsync(ProductRequest entity)
+    public async Task<ServiceResult<ProductResult>> CreateAsync(ProductRequest entity)
     {
         var product = new Product
         {
@@ -64,29 +49,27 @@ public class ProductService : IProductService
             RentalExpiresAfterDays = entity.RentalExpiresAfterDays
         };
 
-        if (product == null)
-        {
-            var serviceResult = new ServiceResult<ProductResult?>();
-            serviceResult.DataIsNull();
-            return serviceResult;
-        }
+        var validationResult = ValidationExtensions.IsValid(product);
 
-        _context.Products.Add(product);
-        await _context.SaveChangesAsync();
-        return await GetAsync(product.Id);
+        if (validationResult.IsSuccess)
+        {
+            _context.Products.Add(product);
+            await _context.SaveChangesAsync();
+            return new ServiceResult<ProductResult>(await GetAsync(product.Id));
+        }
+        else
+        {
+            return new ServiceResult<ProductResult>
+            {
+                Messages = validationResult.Messages
+            };
+        }
     }
 
-    public async Task<ServiceResult<ProductResult?>> EditAsync(Guid id, ProductRequest entity)
+    public async Task<ServiceResult<ProductResult>> EditAsync(Guid id, ProductRequest entity)
     {
         var product = await _context.Products
             .FirstOrDefaultAsync(p => p.Id == id);
-
-        if (product == null)
-        {
-            var serviceResult = new ServiceResult<ProductResult?>();
-            serviceResult.DataIsNull();
-            return serviceResult;
-        }
             
         product.Name = entity.Name;
         product.Description = entity.Description;
@@ -94,10 +77,22 @@ public class ProductService : IProductService
         product.Publisher = entity.Publisher;
         product.RentalExpiresAfterDays = entity.RentalExpiresAfterDays;
 
-        await _context.SaveChangesAsync();
+        var validationResult = ValidationExtensions.IsValid(product);
 
-        return await GetAsync(product.Id);
+        if (validationResult.IsSuccess)
+        {
+            await _context.SaveChangesAsync();
+            return new ServiceResult<ProductResult>(await GetAsync(product.Id));
+        }
+        else
+        {
+            return new ServiceResult<ProductResult>
+            {
+                Messages = validationResult.Messages
+            };
+        }
     }
+
 
     /// <summary>
     /// Removes one Product, removes ArticleReservations, removes all linked articles and disconnects OrderLines from articles
@@ -175,8 +170,8 @@ public class ProductService : IProductService
             var serviceResult = new ServiceResult();
             serviceResult.Messages.Add(new ServiceMessage()
             {
-                Code = "IncorrectAmount",
-                Message = "Give up a different amount.",
+                Code = "InvalAmount",
+                Message = "Give up an amount between 0 and 10000.",
                 Type = ServiceMessageType.Error
             });
             return serviceResult;
