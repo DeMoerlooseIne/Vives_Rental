@@ -62,7 +62,6 @@ public class CustomerService : ICustomerService
         {
             _context.Customers.Add(customer);
             await _context.SaveChangesAsync();
-
             return new ServiceResult<CustomerResult>(await GetAsync(customer.Id));
         }
         else

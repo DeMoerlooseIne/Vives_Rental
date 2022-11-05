@@ -1,12 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Text;
 
 namespace VivesRental.Sdk.Extensions
 {
-    public static class FilterQuery
+    public static class FilterQueryExtension
     {
         public static string AddQuery(this string route, object? filterObject)
         {

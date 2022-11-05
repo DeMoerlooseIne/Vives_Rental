@@ -9,11 +9,8 @@ namespace VivesRental.Services.Abstractions;
 public interface IArticleService
 {
     Task<ArticleResult?> GetAsync(Guid id);
-        
-    Task<List<ArticleResult>> FindAsync(ArticleFilter? filter = null);
-        
-    Task<ServiceResult<ArticleResult>> CreateAsync(ArticleRequest entity);
-       
+    Task<List<ArticleResult>> FindAsync(ArticleFilter? filter = null); 
+    Task<ServiceResult<ArticleResult>> CreateAsync(ArticleRequest entity);    
     Task<ServiceResult> UpdateStatusAsync(Guid articleId, ArticleStatus status);
     Task<ServiceResult> RemoveAsync(Guid id);
         

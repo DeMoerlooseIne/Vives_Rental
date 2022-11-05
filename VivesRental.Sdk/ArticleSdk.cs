@@ -16,7 +16,7 @@ namespace VivesRental.Sdk
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<ServiceResult<IList<ArticleResult>>> FindAsync(ArticleFilter? filter)
+        public async Task<IList<ArticleResult>> FindAsync(ArticleFilter? filter)
         {
             var httpClient = _httpClientFactory.CreateClient("VivesRentalApi");
             var route = "/api/articles".AddQuery(filter);
