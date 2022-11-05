@@ -22,10 +22,10 @@ namespace VivesRental.Sdk
             var route = "/api/articles".AddQuery(filter);
             var response = await httpClient.GetAsync(route);
             response.EnsureSuccessStatusCode();
-            var articles = await response.Content.ReadFromJsonAsync<ServiceResult<IList<ArticleResult>>>();
+            var articles = await response.Content.ReadFromJsonAsync<IList<ArticleResult>>();
             if (articles is null)
             {
-                return new ServiceResult<IList<ArticleResult>>();
+                return new List<ArticleResult>();
             }
 
             return articles;
