@@ -15,27 +15,27 @@ namespace VivesRental.Sdk
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<ServiceResult<IList<OrderLineResult>>?> FindAsync(OrderLineFilter? filter)
+        public async Task<IList<OrderLineResult>> FindAsync(OrderLineFilter? filter)
         {
             var httpClient = _httpClientFactory.CreateClient("VivesRentalApi");
             var route = "/api/orderlines".AddQuery(filter);
             var response = await httpClient.GetAsync(route);
             response.EnsureSuccessStatusCode();
-            var orderlines = await response.Content.ReadFromJsonAsync <ServiceResult<IList<OrderLineResult>>>();
+            var orderlines = await response.Content.ReadFromJsonAsync<IList<OrderLineResult>>();
             if (orderlines is null)
             {
-                return new ServiceResult<IList<OrderLineResult>>();
+                return new List<OrderLineResult>();
             }
             return orderlines;
         }
 
-        public async Task<ServiceResult<OrderLineResult>?> GetAsync(Guid id)
+        public async Task<OrderLineResult?> GetAsync(Guid id)
         {
             var httpClient = _httpClientFactory.CreateClient("VivesRentalApi");
             var route = $"/api/orderlines/{id}";
             var response = await httpClient.GetAsync(route);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync <ServiceResult<OrderLineResult>>();
+            return await response.Content.ReadFromJsonAsync<OrderLineResult>();
         }
 
         public async Task<ServiceResult?> RentAsync(Guid orderId,Guid articleId)

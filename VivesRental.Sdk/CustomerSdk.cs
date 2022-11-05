@@ -16,27 +16,27 @@ namespace VivesRental.Sdk
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<ServiceResult<IList<CustomerResult>>?> FindAsync(CustomerFilter? filter)
+        public async Task<IList<CustomerResult>> FindAsync(CustomerFilter? filter)
         {
             var httpClient = _httpClientFactory.CreateClient("VivesRentalApi");
             var route = "/api/customers".AddQuery(filter);
             var response = await httpClient.GetAsync(route);
             response.EnsureSuccessStatusCode();
-            var customers = await response.Content.ReadFromJsonAsync <ServiceResult<IList<CustomerResult>>>();
+            var customers = await response.Content.ReadFromJsonAsync <IList<CustomerResult>>();
             if (customers is null)
             {
-                return new ServiceResult<IList<CustomerResult>>();
+                return new List<CustomerResult>();
             }
             return customers;
         }
 
-        public async Task<ServiceResult<CustomerResult>?> GetAsync(Guid id)
+        public async Task<CustomerResult?> GetAsync(Guid id)
         {
             var httpClient = _httpClientFactory.CreateClient("VivesRentalApi");
             var route = $"/api/customers/{id}";
             var response = await httpClient.GetAsync(route);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync <ServiceResult<CustomerResult>>();
+            return await response.Content.ReadFromJsonAsync <CustomerResult>();
         }
 
         public async Task<ServiceResult<CustomerResult>?> CreateAsync(CustomerRequest customer)

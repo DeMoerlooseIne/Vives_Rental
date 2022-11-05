@@ -33,7 +33,7 @@ namespace VivesRental.Api.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> Create([FromRoute] Guid customerId)
+        public async Task<IActionResult> Create([FromBody] Guid customerId)
         {
             var createdOrder = await _orderService.CreateAsync(customerId);
             return Ok(createdOrder);

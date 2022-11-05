@@ -2,7 +2,7 @@
 
 namespace VivesRental.Sdk.Extensions
 {
-    public static class FilterQueryExtension
+    public static class FilterSdkExtension
     {
         public static string AddQuery(this string route, object? filterObject)
         {

@@ -25,7 +25,4 @@ public class VivesRentalDbContext : DbContext
         base.OnModelCreating(modelBuilder);
     }
 
-    public void Seed()
-    {
-    }
 }

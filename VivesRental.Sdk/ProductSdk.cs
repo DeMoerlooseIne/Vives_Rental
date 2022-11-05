@@ -22,27 +22,27 @@ namespace VivesRental.Sdk
             _httpClientFactory = httpClientFactory;
         }
 
-        public async Task<ServiceResult<IList<ProductResult>>?> FindAsync(ProductFilter? filter)
+        public async Task<IList<ProductResult>> FindAsync(ProductFilter? filter)
         {
             var httpClient = _httpClientFactory.CreateClient("VivesRentalApi");
             var route = "/api/products".AddQuery(filter);
             var response = await httpClient.GetAsync(route);
             response.EnsureSuccessStatusCode();
-            var products = await response.Content.ReadFromJsonAsync <ServiceResult<IList<ProductResult>>>();
+            var products = await response.Content.ReadFromJsonAsync <IList<ProductResult>>();
             if (products is null)
             {
-                return new ServiceResult<IList<ProductResult>>();
+                return new List<ProductResult>();
             }
             return products;
         }
 
-        public async Task<ServiceResult<ProductResult>?> GetAsync(Guid id)
+        public async Task<ProductResult?> GetAsync(Guid id)
         {
             var httpClient = _httpClientFactory.CreateClient("VivesRentalApi");
             var route = $"/api/products/{id}";
             var response = await httpClient.GetAsync(route);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<ServiceResult<ProductResult>>();
+            return await response.Content.ReadFromJsonAsync<ProductResult>();
         }
 
         public async Task<ServiceResult<ProductResult>?> CreateAsync(ProductRequest product)

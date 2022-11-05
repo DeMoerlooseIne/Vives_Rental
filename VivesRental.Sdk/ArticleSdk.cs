@@ -31,13 +31,13 @@ namespace VivesRental.Sdk
             return articles;
         }
 
-        public async Task<ServiceResult<ArticleResult>?> GetAsync(Guid id)
+        public async Task<ArticleResult?> GetAsync(Guid id)
         {
             var httpClient = _httpClientFactory.CreateClient("VivesRentalApi");
             var route = $"/api/articles/{id}";
             var response = await httpClient.GetAsync(route);
             response.EnsureSuccessStatusCode();
-            return await response.Content.ReadFromJsonAsync<ServiceResult<ArticleResult>>();
+            return await response.Content.ReadFromJsonAsync<ArticleResult>();
         }
 
         public async Task<ServiceResult<ArticleResult>?> CreateAsync(ArticleRequest article)
