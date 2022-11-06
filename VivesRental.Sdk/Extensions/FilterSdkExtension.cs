@@ -10,20 +10,18 @@ namespace VivesRental.Sdk.Extensions
             {
                 return "";
             }
-            var sb = new StringBuilder($"{route}?");
-
-            var objType = filterObject.GetType();
-
-            var properties = objType.GetProperties()
+            var stringBuilder = new StringBuilder($"{route}?");
+            var objectType = filterObject.GetType();
+            var properties = objectType.GetProperties()
                 .Where(p => p.GetValue(filterObject) != null);
 
-            foreach (var prop in properties)
+            foreach (var property in properties)
             {
-                var name = prop.Name;
-                var value = prop.GetValue(filterObject);
-                sb.Append($"{name}={value}&");
+                var name = property.Name;
+                var value = property.GetValue(filterObject);
+                stringBuilder.Append($"{name}={value}&");
             }
-            return sb.ToString().TrimEnd('&');
+            return stringBuilder.ToString().TrimEnd('&');
         }
     }
 }
